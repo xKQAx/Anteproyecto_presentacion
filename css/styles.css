@@ -122,16 +122,23 @@ ol.tarjetas .tarjeta::before{counter-increment:n;content:counter(n);width:1.7rem
 .carril li{position:relative;font-size:.95rem;line-height:1.35;color:var(--ng)}
 .carril li::before{content:"";position:absolute;left:-1.22rem;top:.4rem;width:.5rem;height:.5rem;border-radius:50%;background:var(--az)}
 .carril.est li::before{background:var(--am)}
-.carril small,.fases small,.arq small,.embudo small{display:block;color:var(--mu);font-size:.78rem;font-weight:500;line-height:1.35}
+.carril small,.recorrido small,.arq small,.embudo small{display:block;color:var(--mu);font-size:.78rem;font-weight:500;line-height:1.35}
 .carril .pie{font-size:.84rem;line-height:1.45;color:var(--mu)}
 
 /* Embudo de columnas. --w es solo una guía visual: los conteos van en el texto. */
 .embudo{list-style:none;display:flex;flex-direction:column;align-items:center;gap:.35rem}
-.embudo li{width:var(--w,100%);background:var(--bl);border:1px solid var(--gm);border-top:3px solid var(--az);border-radius:12px;padding:.4rem .75rem;text-align:center}
+.embudo li{width:var(--w,100%);background:var(--bl);border:1px solid var(--gm);border-top:3px solid var(--az);border-radius:12px;padding:.32rem .7rem;text-align:center}
 .embudo b{display:block;color:var(--az);font-size:1.02rem}
 .embudo span{font-size:.8rem;color:var(--mu);line-height:1.35}
 .embudo .fijo{border-top-color:var(--am)}
 .embudo .fijo b{color:#8a5a00}
+/* Al mostrar la diapositiva el embudo nace ancho y queda en --w. Sin movimiento, se ve el ancho final. */
+.activa .embudo li{animation:estrechar .7s ease both}
+.activa .embudo li:nth-child(2){animation-delay:.4s}
+.activa .embudo li:nth-child(3){animation-delay:.8s}
+.activa .embudo li:nth-child(4){animation-delay:1.2s}
+.activa .embudo li:nth-child(5){animation-delay:1.6s}
+@keyframes estrechar{from{width:100%;opacity:.3}to{opacity:1}}
 
 /* Caminos A y B, y las cuatro cajas del laboratorio. */
 .caminos{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,22rem),1fr))}
@@ -152,15 +159,37 @@ ol.tarjetas .tarjeta::before{counter-increment:n;content:counter(n);width:1.7rem
 .flecha.f2{grid-area:f2}
 .down{grid-area:down;text-align:center;color:var(--az);font-size:.85rem;line-height:1}
 
-/* Tres fases del archivo y la franja de fechas. */
-.fases{list-style:none;display:grid;gap:.75rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr))}
-.fases>li{background:var(--bl);border:1px solid var(--gm);border-top:3px solid var(--az);border-radius:var(--r);padding:.85rem .95rem;display:flex;flex-direction:column;gap:.5rem}
-.fases>li:nth-child(2){border-top-color:var(--azm)}
-.fases>li:nth-child(3){border-top-color:var(--am)}
-.fases>li>b{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--az)}
-.fases ol{list-style:none;display:flex;flex-direction:column;gap:.45rem}
-.fases ol li{position:relative;padding-left:.85rem;font-size:.95rem;line-height:1.35;color:var(--ng)}
-.fases ol li::before{content:"";position:absolute;left:0;top:.45rem;width:.4rem;height:.4rem;border-radius:50%;background:var(--am)}
+/* Recorrido por etapas. Sin JS, o con menos movimiento, todas quedan visibles. */
+.recorrido{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.45rem}
+.recorrido li{background:var(--bl);border:1px solid var(--gm);border-top:3px solid var(--az);border-radius:12px;padding:.45rem .55rem;font-size:.8rem;line-height:1.3;color:var(--ng);transition:opacity .35s,background .35s,border-color .35s}
+.recorrido b{display:block;font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;color:var(--az)}
+.js .recorrido:not(.completo) li{opacity:.38}
+.js .recorrido:not(.completo) li.visto{opacity:.8}
+.js .recorrido:not(.completo) li.ahora{opacity:1;border-top-color:var(--am);background:var(--azc)}
+.paso-leyenda{font-size:.95rem;line-height:1.5;color:var(--mu);min-height:3.2rem}
+.paso-sig{display:none;align-self:flex-start}
+.js .paso-sig{display:inline-flex}
+.js .recorrido.completo~.paso-sig{display:none}
+.metilo .ch3{transform-box:fill-box}
+.activa .metilo .ch3{animation:posar 1s ease .15s both}
+@keyframes posar{from{transform:translateY(-18px);opacity:0}to{opacity:1}}
+.betas td.demo{position:relative;background:#e4ecf8;overflow:hidden;color:#0b3578}
+.relleno{position:absolute;left:0;top:0;bottom:0;width:100%;background:#0b3578}
+.activa .relleno{animation:llenar 1.5s ease .2s both}
+@keyframes llenar{from{width:0}to{width:100%}}
+.betas td.demo b{position:relative;z-index:1;color:#0b3578;background:rgba(255,255,255,.82);border-radius:4px;padding:0 .18rem}
+.ops{grid-template-columns:repeat(auto-fit,minmax(min(100%,20rem),1fr))}
+.que{font-style:normal;font-weight:700;color:var(--ng)}
+.af{display:grid;grid-template-columns:1fr 1fr;gap:.35rem .9rem;background:var(--gf);border:1px solid var(--gm);border-radius:12px;padding:.55rem .75rem}
+.af p{margin:0;max-width:none;font-size:.84rem;line-height:1.4}
+.af b{color:var(--az);font-size:.72rem;letter-spacing:.05em;text-transform:uppercase}
+.grupos{display:grid;grid-template-columns:1fr 1fr;gap:.8rem 1.1rem}
+.grupos h2{margin:0 0 .35rem;font:700 .74rem/1.2 var(--s);letter-spacing:.08em;text-transform:uppercase;color:var(--az)}
+.grupos dl{display:flex;flex-direction:column;gap:.32rem}
+.grupos .entrada{background:var(--bl);border:1px solid var(--gm);border-left:3px solid var(--az);border-radius:10px;padding:.32rem .5rem}
+.grupos dt{font-weight:700;color:var(--az);font-size:.76rem}
+.grupos dd{margin:0;color:var(--mu);font-size:.73rem;line-height:1.32}
+@media(max-width:800px){.recorrido,.grupos,.af{grid-template-columns:1fr}}
 .hitos{list-style:none;display:grid;gap:.55rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,13.5rem),1fr))}
 .hitos li{background:var(--bl);border:1px solid var(--gm);border-top:3px solid var(--am);border-radius:12px;padding:.6rem .7rem;display:flex;flex-direction:column;gap:.2rem}
 .hitos time{font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--az)}
@@ -215,6 +244,15 @@ ol.tarjetas .tarjeta::before{counter-increment:n;content:counter(n);width:1.7rem
 .punto.activo::before{background:var(--am);transform:scale(1.5)}
 #cont{color:#fff;font-size:.8rem;font-weight:600;min-width:3.4rem;text-align:center}
 #hint{display:none;position:fixed;bottom:calc(var(--bar) + .2rem);left:50%;transform:translateX(-50%);z-index:200;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.6);pointer-events:none}
+/* QR fijo: vive en el margen inferior, junto a la barra, y no se mueve al cambiar de lámina. */
+#qr{display:none;position:fixed;z-index:220;left:max(.7rem,env(safe-area-inset-left));bottom:max(.45rem,env(safe-area-inset-bottom));flex-direction:column;align-items:center;gap:.12rem;width:5.4rem;padding:.35rem .35rem .28rem;background:#fff;color:var(--az);text-decoration:none;border-radius:12px;border:1px solid var(--gm);border-top:3px solid var(--az);box-shadow:0 8px 22px rgba(10,10,20,.28)}
+#qr img{width:100%;height:auto;display:block}
+#qr span{font-size:.58rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+#qr:focus-visible{outline:3px solid var(--am);outline-offset:3px;border-radius:12px}
+@media(min-width:760px){
+:root{--bar:7.2rem}
+#qr{display:flex}
+}
 @media(min-width:900px){
 .pagina{padding-inline:5.5rem}
 .lado{display:grid}.bb{display:none}.pts{display:flex}
@@ -223,7 +261,7 @@ ol.tarjetas .tarjeta::before{counter-increment:n;content:counter(n);width:1.7rem
 @media(max-height:560px){.pagina{padding-top:1rem}.hero .contenido{gap:1rem}}
 
 /* Animación de entrada y movimiento reducido */
-.activa .cab,.activa .bloque>*,.activa .contenido>.tarjetas,.activa .contenido>.nota,.activa .contenido>.hitos,.activa .contenido>.estado,.activa .contenido>p,.activa .contenido>.graf,.activa .contenido>.nums-wrap,.activa .contenido>.embudo,.activa .contenido>.carriles,.activa .contenido>.caminos,.activa .contenido>.arq,.activa .contenido>.fases,.activa .contenido>.chips{animation:ap .45s ease both}
+.activa .cab,.activa .bloque>*,.activa .contenido>.tarjetas,.activa .contenido>.nota,.activa .contenido>.hitos,.activa .contenido>.estado,.activa .contenido>p,.activa .contenido>.graf,.activa .contenido>.nums-wrap,.activa .contenido>.embudo,.activa .contenido>.carriles,.activa .contenido>.caminos,.activa .contenido>.arq,.activa .contenido>.recorrido,.activa .contenido>.chips,.activa .contenido>.grupos,.activa .contenido>.af,.activa .contenido>.paso-leyenda{animation:ap .45s ease both}
 .activa .bloque>*:nth-child(2){animation-delay:.12s}
 @keyframes ap{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.activa .barra{width:var(--v)}}

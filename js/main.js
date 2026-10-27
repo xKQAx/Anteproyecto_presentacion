@@ -3,32 +3,35 @@ const glosario={
 "ADN":"Ácido desoxirribonucleico. Molécula que guarda las instrucciones para construir y operar un organismo.",
 "genes":"Tramos del ADN con instrucciones para una función concreta, como producir una proteína.",
 "epigenética":"Estudio de los cambios en la actividad de los genes que no modifican la secuencia del ADN.",
-"metilación del ADN":"Marca química (un grupo CH₃) que se añade al ADN y que suele reducir la actividad del gen en esa zona.",
-"chip 450k":"Chip de laboratorio (Illumina HumanMethylation450) que mide la metilación en unas 450.000 posiciones del genoma.",
-"fenotipo":"Características observables de una persona, resultado de combinar genética y entorno.",
+"metilación del ADN":"Grupo CH₃ que se añade al ADN. En este proyecto suele asociarse a menor actividad del gen; no es una ley de este dataset.",
+"chip 450k":"HumanMethylation450: mide unas 450.000 posiciones. El chip EPIC, de 850k, queda fuera de este trabajo.",
+"fenotipo":"En este trabajo es la etiqueta clínica de la fila, SCZ o CNT. El gsm_id la alinea con los betas de esa muestra.",
 "esquizofrenia":"Trastorno mental grave que afecta el pensamiento, la percepción y el comportamiento.",
 "biomarcadores":"Indicadores biológicos medibles que ayudan a identificar una enfermedad de forma objetiva.",
-"firma epigenética":"Conjunto de posiciones del genoma con metilación distinta entre dos grupos. Importa el patrón completo.",
+"firma epigenética":"Patrón de sitios CpG que se compara entre los dos grupos. Importa el conjunto, no una marca aislada ni una dirección global de metilación.",
 "sangre periférica":"Sangre que circula por el cuerpo y se obtiene con una extracción común.",
 "NCBI GEO":"Repositorio público de EE. UU. con datos de miles de estudios genómicos.",
-"armonizarse":"Corregir las diferencias técnicas entre laboratorios para que los datos sean comparables.",
+"armonizarse":"Armoniza las cohortes sin usar el diagnóstico. La referencia es GSE84727. No es el filtro de varianza ni dasen o BMIQ.",
+"armoniza":"Armoniza las cohortes sin usar el diagnóstico. La referencia es GSE84727. No es el filtro de varianza ni dasen o BMIQ.",
+"cohorte":"Cada GSE es una cohorte. En el archivo FINAL entran cinco: GSE80417, GSE84727, GSE116378, GSE116379 y GSE152027. GSE147221 quedó excluida.",
 "modelo supervisado":"Algoritmo que aprende a clasificar a partir de ejemplos con respuesta conocida.",
-"AUC-ROC":"Mide qué tan bien el modelo distingue entre dos grupos. 1,0 es perfecto y 0,5 equivale al azar.",
-"F1":"Mide el equilibrio entre aciertos y omisiones al asignar la clase. 1,0 es el mejor valor.",
+"AUC-ROC":"Ordena casos frente a controles: 0,50 es el azar y 1,0 es perfecto. La meta del anteproyecto era ≥ 0,75 y ningún modelo FINAL la cruza. KNN, el mejor, llega a 0,678 ± 0,051 en la CV y a 0,696 en el holdout.",
+"F1":"Equilibra la etiqueta en el corte que asigna la clase. La meta era ≥ 0,70 y ningún modelo FINAL la cruza. KNN, el mejor: 0,661 ± 0,039 en la CV y 0,686 en el holdout.",
 "validación cruzada":"Técnica que divide los datos en partes y rota cuál se usa para evaluar, para no medir con lo ya visto.",
-"LOGO":"Leave-one-cohort-out. Se evalúa sobre un estudio completo que el modelo nunca vio.",
+"LOGO":"Cada test es un GSE entero que el modelo no vio. En el brazo B, sin covariables, los cinco AUC quedan cerca del azar (~0,38–0,53). El 0,472 es el KNN de ese brazo, no el resultado principal.",
 "plataforma web":"Aplicación a la que se entra desde un navegador, sin instalar nada. Aquí se construyó sobre PERASArc (Django y Vue.js).",
-"CSV armonizado":"Archivo de tabla con las columnas exactas que el modelo espera, ya procesado por el laboratorio.",
-"valor beta":"Número entre 0 y 1 que resume la metilación de un sitio en una persona. 0 es nada metilado y 1 es metilado del todo. Cada celda de la matriz guarda uno.",
-"sitio CpG":"Lugar del genoma donde una citosina va seguida de una guanina. En los archivos se llama cg… y es una columna de la matriz.",
-"gsm_id":"Identificador de una muestra en GEO. En la matriz, cada fila es un gsm_id: una persona.",
-"regRCPqn":"Ajuste del laboratorio, en R, que pone las matrices de los estudios en una escala común. Usa GSE84727, de Aberdeen, como referencia. Ocurre antes de entrenar.",
-"panel congelado":"Lista fija de sitios CpG guardada en panel_cpg_final.txt. Se eligió dentro de cada pliegue al entrenar. La web la reutiliza y no vuelve a filtrar.",
-"holdout":"447 personas (227 con esquizofrenia y 220 controles), el 20 % apartado por el laboratorio. Se midió una sola vez y no eligió al ganador. Son personas de los mismos cinco estudios, no un laboratorio nuevo.",
+"CSV armonizado":"Tabla que la SPA recibe ya procesada. No ejecuta dasen, BMIQ, regRCPqn, EpiDISH, EpiSmokEr ni methylclock, ni reentrena.",
+"valor beta":"Número entre 0 y 1: qué tan metilado está un sitio en una muestra. Es la celda de la matriz.",
+"sitio CpG":"Columna cg… del chip. El modelo no mira un gen: mira miles de estas columnas.",
+"gsm_id":"Identificador que alinea la fila de fenotipo con la fila de betas.",
+"regRCPqn":"Armoniza las cohortes sin usar el diagnóstico. La referencia es GSE84727. No es el filtro de varianza ni dasen o BMIQ.",
+"panel congelado":"Tras quitar 639 sondas ch. quedan 227.323 sitios. El filtro de varianza, con umbral 0,001, deja 66.441, fijados en panel_cpg_final.txt. La web no vuelve a filtrar.",
+"holdout":"447 personas (227 SCZ / 220 CNT), el 20 % apartado por el laboratorio y medido una vez. Mezcla los mismos cinco estudios: no es un laboratorio nuevo.",
+"selección dentro del pliegue":"Mann-Whitney y SelectKBest eligen k solo con el train de ese pliegue, para no mirar el examen. La moda de la CV anidada FINAL es KNN 881, Random Forest 558 y SVM 137.",
 "camino A/B":"Dos entregas del mismo panel. A (v1-prod100) residualiza nueve covariables. B (v1-prod100-b) usa solo el panel, sin residualizar, y es el que abre el formulario. B no es un recorte del archivo A.",
-"camino A":"Entrega v1-prod100. El joblib residualiza el panel con nueve covariables y después clasifica. El ajuste prod_100 usa las 2.229 muestras etiquetadas.",
-"camino B":"Entrega v1-prod100-b. Otros tres joblib, solo con el panel y sin residualizar. El formulario abre aquí. No es un recorte del archivo del camino A.",
-"joblib":"Archivo en el que Python guarda un modelo ya entrenado. La plataforma lo carga para calcular; no lo vuelve a ajustar.",
+"camino A":"Entrega v1-prod100. El joblib residualiza nueve covariables: sexo, edad epigenética, smoking_SSc, B, NK, CD4T, CD8T, Mono y Eosino. Neutro no entra. No son columnas extra del clasificador, y prod_100 usa las 2.229 muestras etiquetadas.",
+"camino B":"Entrega v1-prod100-b: solo el panel, en joblibs *_sin_cov.joblib, sin residualizar. El formulario abre en B. No es un recorte del archivo A.",
+"joblib":"Archivo con el modelo ya entrenado. La plataforma lo carga para calcular la clase y p_scz; no reentrena.",
 "covariables":"Datos que acompañan a la metilación: sexo, edad epigenética, humo y fracciones de células. En el camino A el joblib las usa para residualizar. No entran como columnas extra del clasificador.",
 "dasen":"Normalización del laboratorio, en R, que deja comparables las lecturas del chip 450k. Es anterior al entrenamiento de este trabajo.",
 "BMIQ":"Ajuste del laboratorio, en R, que corrige el sesgo entre los dos tipos de sonda del chip. Va junto a dasen, antes de mezclar los estudios.",
@@ -36,13 +39,21 @@ const glosario={
 "EpiSmokEr":"Cálculo en R de la exposición al humo a partir de la metilación. También ocurre antes de mezclar.",
 "methylclock":"Cálculo en R de la edad epigenética, después de regRCPqn. Esa edad es una de las nueve covariables del camino A.",
 "ComBat":"Ajuste de diferencias entre estudios. El laboratorio lo aplica después, junto con la partición 80/20. La página no lo ejecuta.",
-"CV anidada":"Diez pliegues externos, estratificados, miden el desempeño. Un anillo interno elige k y los hiperparámetros. Usa las 1.782 personas de entrenamiento, mezcladas de los mismos estudios.",
-"p_scz":"Probabilidad que el modelo asigna a la clase esquizofrenia en esa muestra. La página muestra la clase, SCZ o CNT, y este número.",
+"CV anidada":"Diez pliegues externos estratificados miden el desempeño. Un anillo interno elige k y los hiperparámetros. El train reúne 1.782 personas.",
+"p_scz":"Probabilidad de la clase SCZ. La página muestra esa probabilidad y la clase SCZ o CNT, con el aviso: «Herramienta de investigación; no constituye diagnóstico clínico.»",
 "smoking_SSc":"Puntaje de humo estimado por EpiSmokEr desde la propia metilación. En el camino A se residualiza, y al restarlo se quita señal que venía del chip.",
 "edad epigenética":"Edad estimada por methylclock a partir de la metilación, no la edad de calendario. Es una de las nueve covariables del camino A.",
 "sondas ch.":"639 sondas que el encabezado FINAL todavía traía y que este trabajo quitó antes del filtro de varianza. El conteo pasa de 227.962 sitios a 227.323.",
-"Mann-Whitney":"Prueba usada dentro del entrenamiento para comparar cada sitio entre los dos grupos antes de fijar k. No describe una dirección única de metilación en todo el archivo.",
+"Mann-Whitney":"Junto con SelectKBest, elige k solo con el train de ese pliegue, para no mirar el examen. No describe una dirección única de metilación.",
 "Platt":"Calibración que convierte la distancia de la SVM lineal en una probabilidad. Por eso el archivo se llama pipeline_svm_platt_prod_100.joblib."};
+
+document.documentElement.classList.add('js');
+/* Las frases del glosario visible mandan sobre el objeto, para que el tooltip diga lo mismo. */
+document.querySelectorAll('.glosario [data-k]').forEach(n=>{
+  const dd=n.querySelector('dd');
+  if(dd) glosario[n.dataset.k]=dd.textContent.replace(/\s+/g,' ').trim();
+});
+if(glosario.regRCPqn){glosario.armoniza=glosario.armonizarse=glosario.regRCPqn}
 
 const $=s=>document.querySelector(s),P=[...document.querySelectorAll('.pagina')],N=P.length,quieto=matchMedia('(prefers-reduced-motion:reduce)');
 let a=0,ocupado=false;
@@ -72,12 +83,43 @@ function ir(n){
   setTimeout(()=>{o.classList.remove('saliendo-izq','saliendo-der');ocupado=false},quieto.matches?0:520);
   ui();ocu();$('#hint')?.remove();
   p.querySelector('h1').focus({preventScroll:true});
+  recorrido(p);
+}
+/* Ilumina una etapa del archivo. Con menos movimiento se ve el recorrido completo. */
+function recorrido(p){
+  const ol=p.querySelector('.recorrido'); if(!ol) return;
+  const items=[...ol.children].filter(n=>n.tagName==='LI');
+  const ley=p.querySelector('.paso-leyenda'),btn=p.querySelector('.paso-sig');
+  if(ley&&!ley.dataset.base) ley.dataset.base=ley.textContent.trim();
+  if(quieto.matches){
+    ol.classList.add('completo');
+    items.forEach(li=>li.classList.remove('ahora','visto'));
+    if(ley) ley.textContent=ley.dataset.base;
+    return;
+  }
+  ol.classList.remove('completo');
+  ol.dataset.i='0';
+  const pintar=()=>{
+    const i=+ol.dataset.i;
+    items.forEach((li,k)=>{li.classList.toggle('ahora',k===i);li.classList.toggle('visto',k<i)});
+    if(ley) ley.textContent=items[i].dataset.txt||ley.dataset.base;
+    if(btn) btn.textContent=i===items.length-1?'Reiniciar recorrido':'Siguiente etapa';
+  };
+  pintar();
+  if(btn&&!btn.dataset.listo){
+    btn.dataset.listo='1';
+    btn.addEventListener('click',ev=>{
+      ev.stopPropagation();
+      ol.dataset.i=String((+ol.dataset.i+1)%items.length);
+      pintar();
+    });
+  }
 }
 
 /* Inicio: respeta el enlace directo (#p5) */
 const h=+((location.hash.match(/^#p(\d+)$/)||[])[1]);
 if(h>=1&&h<=N)a=h-1;
-P.forEach((p,i)=>p.inert=i!==a);P[a].classList.add('activa');ui();
+P.forEach((p,i)=>p.inert=i!==a);P[a].classList.add('activa');ui();recorrido(P[a]);
 setTimeout(()=>$('#hint')?.remove(),5000);
 
 /* Teclado y gestos */

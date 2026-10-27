@@ -19,6 +19,10 @@
 <button id="sig" class="lado" type="button" aria-label="Página siguiente"></button>
 <div id="hint" aria-hidden="true">Use las flechas del teclado para navegar</div>
 <nav id="progreso" aria-label="Progreso de lectura"></nav>
+<a id="qr" href="https://xkqax.github.io/Anteproyecto_presentacion/" aria-label="Escanear para abrir la guía en el celular">
+  <img src="img/guia-qr.svg" alt="" width="148" height="148">
+  <span>Escanear</span>
+</a>
 
 <main id="libro">
 
@@ -30,7 +34,7 @@
     <p>Una guía para entender la investigación sobre epigenética y esquizofrenia, escrita para cualquier lector.</p>
     <div class="acciones">
       <button class="btn pri" type="button" onclick="ir(1)">Comenzar</button>
-      <button class="btn sec" type="button" onclick="ir(19)">Ver resumen</button>
+      <button class="btn sec" type="button" onclick="ir(22)">Ver resumen</button>
     </div>
     <p class="firma">Santiago Cacua Villamizar<br>Director: E. Pinzón · Codirectores: H. Hernández y N. Farelo</p>
   </div>
@@ -69,9 +73,10 @@
       <div class="col">
         <p>Uno de los mecanismos más estudiados es la <i class="t" tabindex="0">metilación del ADN</i>. Consiste en añadir un grupo metilo (CH₃) en ciertas posiciones del genoma, y con frecuencia el gen de esa zona queda menos activo.</p>
         <p>Para medirla a gran escala se usa el <i class="t" tabindex="0" data-k="chip 450k">chip Illumina 450k</i>. El modelo no lee el genoma entero: lee una tabla. Cada fila es una persona (<i class="t" tabindex="0">gsm_id</i>) y cada columna, un <i class="t" tabindex="0">sitio CpG</i>.</p>
-        <p class="sello"><svg viewBox="0 0 120 36" aria-hidden="true"><rect x="1" y="6" width="28" height="24" rx="6" fill="none" stroke="currentColor" stroke-width="2"/><text x="15" y="23" text-anchor="middle" font-size="13" fill="currentColor" stroke="none" font-family="system-ui,sans-serif">C</text><path d="M32 18h16" stroke="currentColor" stroke-width="2"/><rect x="50" y="4" width="64" height="28" rx="8" fill="#F6AD24" stroke="none"/><text x="82" y="23" text-anchor="middle" font-size="13" fill="#191919" stroke="none" font-family="system-ui,sans-serif">CH₃</text></svg>Grupo CH₃</p>
-        <div class="nota">Suele asociarse a menor actividad del gen. Aquí la celda es solo el <i class="t" tabindex="0">valor beta</i>, de 0 a 1. No es una ley de «caso más metilado».</div>
+        <p class="sello metilo"><svg class="posa" viewBox="0 0 148 70" aria-hidden="true"><rect x="34" y="36" width="80" height="28" rx="8" fill="none" stroke="currentColor" stroke-width="2"/><text x="74" y="55" text-anchor="middle" font-size="14" fill="currentColor" stroke="none" font-family="system-ui,sans-serif">CpG</text><g class="ch3"><rect x="46" y="4" width="56" height="26" rx="8" fill="#F6AD24"/><text x="74" y="22" text-anchor="middle" font-size="13" fill="#191919" stroke="none" font-family="system-ui,sans-serif">CH₃</text></g></svg>El grupo CH₃ se posa sobre un CpG</p>
+        <div class="nota">Suele asociarse a menor actividad del gen. No es una ley de este dataset. La celda es solo el <i class="t" tabindex="0">valor beta</i>, de 0 a 1.</div>
       </div>
+      <div class="col">
       <figure class="matriz">
         <div class="matriz-leyenda"><span>Fila · persona</span><span>Columna · cg…</span><span class="escala"><i aria-hidden="true"></i>beta 0 a 1</span></div>
         <table class="betas">
@@ -86,6 +91,17 @@
         </table>
         <figcaption>Esquema, no una fila real. El color sigue al valor beta.</figcaption>
       </figure>
+      <figure class="matriz mini">
+        <table class="betas">
+          <caption class="sr">Esquema de una fila. La palabra muestra no es un identificador de GEO.</caption>
+          <thead><tr><th scope="col">fila</th><th scope="col">cg00000000</th><th scope="col">cg00000001</th><th scope="col">cg00000002</th><th scope="col">etiqueta</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">muestra</th><td style="--b:.22">0,22</td><td class="alta" style="--b:.58">0,58</td><td class="demo"><span class="relleno" aria-hidden="true"></span><b>1,00</b></td><td><em class="eti scz">SCZ</em></td></tr>
+          </tbody>
+        </table>
+        <figcaption>Esquema, no un paciente. Fila = muestra, columna = sitio, celda = beta. La tercera se llena de 0 a 1.</figcaption>
+      </figure>
+      </div>
     </div>
   </div>
 </section>
@@ -171,7 +187,7 @@
   <div class="contenido">
     <header class="cab"><p class="cap">Capítulo 8</p><h1 tabindex="-1">Cinco estudios, un archivo</h1></header>
     <div class="bloque">
-      <p class="ancho">Vienen de <i class="t" tabindex="0">NCBI GEO</i>, medidos en sangre con el chip 450k. Los conteos son los de la entrega final, train más <i class="t" tabindex="0">holdout</i>, no los de los artículos. Cada laboratorio mide a su manera: el archivo se <i class="t" tabindex="0">armoniza</i> antes de unirse.</p>
+      <p class="ancho">Vienen de <i class="t" tabindex="0">NCBI GEO</i>, medidos en sangre con el chip 450k. Los conteos son los de la entrega final, train más <i class="t" tabindex="0">holdout</i>, no los de los artículos. Cada laboratorio mide a su manera: el archivo se <i class="t" tabindex="0" data-k="regRCPqn">armoniza</i> antes de unirse.</p>
       <ul class="tarjetas cohortes ancho" aria-label="Cohortes del metaanálisis final">
         <li class="tarjeta"><b>GSE116378</b><span class="lugar">DUTCHSCZ · sangre · 2018</span><span class="conteo">15 SCZ / 49 CNT</span></li>
         <li class="tarjeta"><b>GSE116379</b><span class="lugar">DUTCHSCZ · hambruna prenatal · 2018</span><span class="conteo">74 SCZ / 79 CNT</span></li>
@@ -219,7 +235,20 @@
   </div>
 </section>
 
-<section class="pagina blanca" aria-label="El modelo">
+<section class="pagina blanca" aria-label="Cuatro operaciones">
+  <div class="contenido">
+    <header class="cab"><p class="cap">Capítulo 8 · el archivo</p><h1 tabindex="-1">Cuatro operaciones distintas</h1></header>
+    <p>A menudo se nombran juntas. Cada una corrige una cosa y deja quieta la otra.</p>
+    <ul class="tarjetas ops">
+      <li class="tarjeta"><b>Normalizar</b><span><em class="que">Corrige</em> las lecturas dentro del chip: <i class="t" tabindex="0">dasen</i> y <i class="t" tabindex="0">BMIQ</i>. <em class="que">No toca</em> la escala entre cohortes ni el diagnóstico.</span></li>
+      <li class="tarjeta"><b>Armonizar</b><span><em class="que">Corrige</em> la escala entre estudios con <i class="t" tabindex="0">regRCPqn</i>, sin usar el diagnóstico. Referencia GSE84727. <em class="que">No es</em> dasen, BMIQ ni el filtro de varianza.</span></li>
+      <li class="tarjeta"><b>Filtrar</b><span><em class="que">Corrige</em> el exceso de columnas: 227.323 pasan a 66.441 (umbral 0,001). <em class="que">No toca</em> la armonización ni las covariables.</span></li>
+      <li class="tarjeta"><b>Residualizar</b><span><em class="que">Corrige</em> el panel del <i class="t" tabindex="0" data-k="camino A">camino A</i> restando nueve covariables. <em class="que">No subió el techo</em>: en KNN el holdout pasa de AUC 0,696 a 0,660 y el F1 de 0,686 a 0,601. <i class="t" tabindex="0">smoking_SSc</i> sale de la propia metilación, así que restarlo quita señal metilómica.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="pagina clara" aria-label="El modelo">
   <div class="contenido">
     <header class="cab"><p class="cap">Capítulo 9</p><h1 tabindex="-1">De medio millón de sondas al panel</h1></header>
     <p>Un <i class="t" tabindex="0">modelo supervisado</i> aprende con ejemplos cuya respuesta ya se conoce. Antes de nombrar algoritmos, el archivo se reduce así.</p>
@@ -228,13 +257,13 @@
       <li style="--w:78%"><b>227.962</b><span>sitios en el encabezado FINAL, más gsm_id</span></li>
       <li style="--w:74%"><b>227.323</b><span>tras excluir 639 <i class="t" tabindex="0">sondas ch.</i></span></li>
       <li style="--w:58%"><b>66.441</b><span>filtro de varianza, umbral 0,001</span></li>
-      <li class="fijo" style="--w:100%"><b><i class="t" tabindex="0" data-k="panel congelado">Panel congelado</i></b><span>Dentro de cada pliegue, k. Moda de la CV anidada FINAL: KNN 881, Random Forest 558, SVM 137. La lista queda en panel_cpg_final.txt. La web no vuelve a filtrar.</span></li>
+      <li class="fijo" style="--w:100%"><b><i class="t" tabindex="0" data-k="selección dentro del pliegue">k en el pliegue</i></b><span>Mann-Whitney y SelectKBest eligen k solo con el train de ese pliegue. Moda: KNN 881, Random Forest 558, SVM 137. La lista queda en el <i class="t" tabindex="0" data-k="panel congelado">panel congelado</i>. La web no vuelve a filtrar.</span></li>
     </ol>
     <p class="nota">El ancho es una guía; los números son los conteos reales.</p>
   </div>
 </section>
 
-<section class="pagina clara" aria-label="Los tres algoritmos">
+<section class="pagina blanca" aria-label="Los tres algoritmos">
   <div class="contenido">
     <header class="cab"><p class="cap">Capítulo 9 · la página</p><h1 tabindex="-1">Tres algoritmos, de cinco</h1></header>
     <p>Se compararon cinco clasificadores. KNN, SVM lineal y Random Forest pasan a la plataforma. Regresión logística y Naive Bayes se midieron y no están en la interfaz.</p>
@@ -246,7 +275,7 @@
   </div>
 </section>
 
-<section class="pagina blanca" aria-label="Tres mediciones">
+<section class="pagina clara" aria-label="Tres mediciones">
   <div class="contenido">
     <header class="cab"><p class="cap">Capítulo 9 · la medida</p><h1 tabindex="-1">Tres mediciones distintas</h1></header>
     <p>No es una sola «validación». Cada caja responde una pregunta diferente. El desempeño se lee con <i class="t" tabindex="0">AUC-ROC</i> y <i class="t" tabindex="0">F1</i>.</p>
@@ -258,10 +287,13 @@
   </div>
 </section>
 
-<section class="pagina clara" aria-label="Resultados de AUC">
+<section class="pagina blanca" aria-label="Resultados de AUC">
   <div class="contenido">
     <header class="cab"><p class="cap">Capítulo 10</p><h1 tabindex="-1">Ninguno cruza el 0,75</h1></header>
-    <p>Meta del anteproyecto: <i class="t" tabindex="0">AUC-ROC</i> ≥ 0,75. A la izquierda, la <i class="t" tabindex="0">CV anidada</i> FINAL; a la derecha, el <i class="t" tabindex="0" data-k="holdout">holdout</i> sin covariables. La raya gris es el azar (0,50) y la verde, la meta.</p>
+    <div class="af">
+      <p><b>AUC ordena</b> casos frente a controles. Azar 0,50. Meta 0,75. A la izquierda, la <i class="t" tabindex="0">CV anidada</i> FINAL; a la derecha, el <i class="t" tabindex="0" data-k="holdout">holdout</i> sin covariables.</p>
+      <p><b>F1 mide el corte</b> que asigna la etiqueta. Meta 0,70. Ningún modelo FINAL cruza 0,75 ni 0,70.</p>
+    </div>
     <div class="graf cmp" role="img" aria-label="AUC. CV anidada FINAL y holdout sin covariables. KNN 0,678 ± 0,051 y 0,696. Random Forest 0,660 ± 0,048 y 0,641. SVM lineal 0,653 ± 0,035 y 0,652. Logística 0,633 ± 0,043 y 0,598. Naive Bayes 0,627 ± 0,038 y 0,612. Azar 0,50. Meta 0,75. Ninguno llega a 0,75.">
       <div class="rejilla">
         <span></span><span class="colh sw">CV anidada FINAL</span><span class="colh sw ho">Holdout sin covariables</span>
@@ -286,7 +318,7 @@
   </div>
 </section>
 
-<section class="pagina blanca" aria-label="Resultados de F1">
+<section class="pagina clara" aria-label="Resultados de F1">
   <div class="contenido">
     <header class="cab"><p class="cap">Capítulo 10 · F1</p><h1 tabindex="-1">Tampoco se llega al 0,70</h1></header>
     <p>El <i class="t" tabindex="0">F1</i> mira el equilibrio al asignar la clase. La meta del anteproyecto era 0,70. Ninguna celda la alcanza. El mejor holdout es el de KNN: 0,686.</p>
@@ -307,7 +339,7 @@
   </div>
 </section>
 
-<section class="pagina clara" aria-label="Caminos de la plataforma">
+<section class="pagina blanca" aria-label="Caminos de la plataforma">
   <div class="contenido">
     <header class="cab"><p class="cap">Capítulo 11</p><h1 tabindex="-1">Dos caminos, un formulario</h1></header>
     <p>Sin una <i class="t" tabindex="0">plataforma web</i>, el modelo sería un script. PERASArc, ampliada aquí, lo abre en el navegador: cuenta, <i class="t" tabindex="0" data-k="CSV armonizado">CSV armonizado</i>, y KNN, SVM lineal o Random Forest. Los <i class="t" tabindex="0" data-k="camino A/B">caminos A y B</i> comparten panel y no comparten archivo.</p>
@@ -328,7 +360,7 @@
   </div>
 </section>
 
-<section class="pagina blanca" aria-label="Arquitectura mínima">
+<section class="pagina clara" aria-label="Arquitectura mínima">
   <div class="contenido">
     <header class="cab"><p class="cap">Capítulo 11 · el equipo</p><h1 tabindex="-1">Cuatro cajas en el laboratorio</h1></header>
     <p>La página vive en el LAN del laboratorio. El servidor de la UDES no está. Abrirla a internet queda fuera de este proyecto.</p>
@@ -349,38 +381,83 @@
   </div>
 </section>
 
-<section class="pagina clara" aria-label="Cómo todo conecta">
+<section class="pagina blanca" aria-label="Glosario de biología y datos">
   <div class="contenido">
-    <header class="cab"><p class="cap">Capítulo 12</p><h1 tabindex="-1">Cómo todo conecta</h1></header>
-    <p>Un problema clínico, una medida en sangre y, al final, una clase en la página. El archivo recorre tres fases, en este orden.</p>
-    <ol class="fases">
-      <li>
-        <b>Fase 1 · Origen</b>
-        <ol>
-          <li>Estudios GEO<small>sangre, chip 450k</small></li>
-          <li>Laboratorio R</li>
-          <li>Matrices de betas</li>
-        </ol>
-      </li>
-      <li>
-        <b>Fase 2 · Este trabajo</b>
-        <ol>
-          <li>Filtro de varianza<small>227.323 → 66.441</small></li>
-          <li><i class="t" tabindex="0">Mann-Whitney</i>, k, <i class="t" tabindex="0">CV anidada</i>, <i class="t" tabindex="0" data-k="holdout">holdout</i> 20 %</li>
-        </ol>
-      </li>
-      <li>
-        <b>Fase 3 · La página</b>
-        <ol>
-          <li>Export<small>joblibs + <i class="t" tabindex="0" data-k="panel congelado">panel congelado</i></small></li>
-          <li>SPA<small>CSV ya armonizado → clase + <i class="t" tabindex="0">p_scz</i></small></li>
-        </ol>
-      </li>
-    </ol>
+    <header class="cab"><p class="cap">Glosario</p><h1 tabindex="-1">Biología y datos</h1></header>
+    <div class="grupos glosario">
+      <section>
+        <h2>Biología</h2>
+        <dl>
+          <div class="entrada" data-k="metilación del ADN"><dt>metilación del ADN</dt><dd>Grupo CH₃ que se añade al ADN. En este proyecto suele asociarse a menor actividad del gen; no es una ley de este dataset.</dd></div>
+          <div class="entrada" data-k="sitio CpG"><dt>sitio CpG</dt><dd>Columna cg… del chip. El modelo no mira un gen: mira miles de estas columnas.</dd></div>
+          <div class="entrada" data-k="valor beta"><dt>valor beta</dt><dd>Número entre 0 y 1: qué tan metilado está un sitio en una muestra. Es la celda de la matriz.</dd></div>
+          <div class="entrada" data-k="fenotipo"><dt>fenotipo</dt><dd>En este trabajo es la etiqueta clínica de la fila, SCZ o CNT. El gsm_id la alinea con los betas de esa muestra.</dd></div>
+          <div class="entrada" data-k="firma epigenética"><dt>firma epigenética</dt><dd>Patrón de sitios CpG que se compara entre los dos grupos. Importa el conjunto, no una marca aislada ni una dirección global de metilación.</dd></div>
+        </dl>
+      </section>
+      <section>
+        <h2>Datos</h2>
+        <dl>
+          <div class="entrada" data-k="cohorte"><dt>cohorte / GSE</dt><dd>Cada GSE es una cohorte. En el archivo FINAL entran cinco: GSE80417, GSE84727, GSE116378, GSE116379 y GSE152027. GSE147221 quedó excluida.</dd></div>
+          <div class="entrada" data-k="chip 450k"><dt>chip Illumina 450k</dt><dd>HumanMethylation450: mide unas 450.000 posiciones. El chip EPIC, de 850k, queda fuera de este trabajo.</dd></div>
+          <div class="entrada" data-k="gsm_id"><dt>gsm_id</dt><dd>Identificador que alinea la fila de fenotipo con la fila de betas.</dd></div>
+          <div class="entrada" data-k="regRCPqn"><dt>armonización (regRCPqn)</dt><dd>Armoniza las cohortes sin usar el diagnóstico. La referencia es GSE84727. No es el filtro de varianza ni dasen o BMIQ.</dd></div>
+          <div class="entrada" data-k="panel congelado"><dt>panel congelado</dt><dd>Tras quitar 639 sondas ch. quedan 227.323 sitios. El filtro de varianza, con umbral 0,001, deja 66.441, fijados en panel_cpg_final.txt. La web no vuelve a filtrar.</dd></div>
+        </dl>
+      </section>
+    </div>
   </div>
 </section>
 
-<section class="pagina blanca" aria-label="Fechas del cierre">
+<section class="pagina clara" aria-label="Glosario de medida y producto">
+  <div class="contenido">
+    <header class="cab"><p class="cap">Glosario</p><h1 tabindex="-1">Medida y producto</h1></header>
+    <div class="grupos glosario">
+      <section>
+        <h2>Evaluación</h2>
+        <dl>
+          <div class="entrada" data-k="selección dentro del pliegue"><dt>selección dentro del pliegue</dt><dd>Mann-Whitney y SelectKBest eligen k solo con el train de ese pliegue, para no mirar el examen. La moda de la CV anidada FINAL es KNN 881, Random Forest 558 y SVM 137.</dd></div>
+          <div class="entrada" data-k="CV anidada"><dt>validación cruzada anidada</dt><dd>Diez pliegues externos estratificados miden el desempeño. Un anillo interno elige k y los hiperparámetros. El train reúne 1.782 personas.</dd></div>
+          <div class="entrada" data-k="holdout"><dt>holdout</dt><dd>447 personas (227 SCZ / 220 CNT), el 20 % apartado por el laboratorio y medido una vez. Mezcla los mismos cinco estudios: no es un laboratorio nuevo.</dd></div>
+          <div class="entrada" data-k="LOGO"><dt>LOGO</dt><dd>Cada test es un GSE entero que el modelo no vio. En el brazo B, sin covariables, los cinco AUC quedan cerca del azar (~0,38–0,53). El 0,472 es el KNN de ese brazo, no el resultado principal.</dd></div>
+          <div class="entrada" data-k="AUC-ROC"><dt>AUC-ROC</dt><dd>Ordena casos frente a controles: 0,50 es el azar y 1,0 es perfecto. La meta del anteproyecto era ≥ 0,75 y ningún modelo FINAL la cruza. KNN, el mejor, llega a 0,678 ± 0,051 en la CV y a 0,696 en el holdout.</dd></div>
+          <div class="entrada" data-k="F1"><dt>F1</dt><dd>Equilibra la etiqueta en el corte que asigna la clase. La meta era ≥ 0,70 y ningún modelo FINAL la cruza. KNN, el mejor: 0,661 ± 0,039 en la CV y 0,686 en el holdout.</dd></div>
+        </dl>
+      </section>
+      <section>
+        <h2>Producto</h2>
+        <dl>
+          <div class="entrada" data-k="camino A"><dt>camino A</dt><dd>Entrega v1-prod100. El joblib residualiza nueve covariables: sexo, edad epigenética, smoking_SSc, B, NK, CD4T, CD8T, Mono y Eosino. Neutro no entra. No son columnas extra del clasificador, y prod_100 usa las 2.229 muestras etiquetadas.</dd></div>
+          <div class="entrada" data-k="camino B"><dt>camino B</dt><dd>Entrega v1-prod100-b: solo el panel, en joblibs *_sin_cov.joblib, sin residualizar. El formulario abre en B. No es un recorte del archivo A.</dd></div>
+          <div class="entrada" data-k="joblib"><dt>joblib</dt><dd>Archivo con el modelo ya entrenado. La plataforma lo carga para calcular la clase y p_scz; no reentrena.</dd></div>
+          <div class="entrada" data-k="p_scz"><dt>p_scz</dt><dd>Probabilidad de la clase SCZ. La página muestra esa probabilidad y la clase SCZ o CNT, con el aviso: «Herramienta de investigación; no constituye diagnóstico clínico.»</dd></div>
+          <div class="entrada" data-k="CSV armonizado"><dt>CSV ya armonizado</dt><dd>Tabla que la SPA recibe ya procesada. No ejecuta dasen, BMIQ, regRCPqn, EpiDISH, EpiSmokEr ni methylclock, ni reentrena.</dd></div>
+        </dl>
+      </section>
+    </div>
+  </div>
+</section>
+
+<section class="pagina blanca" aria-label="Cómo todo conecta">
+  <div class="contenido">
+    <header class="cab"><p class="cap">Capítulo 12</p><h1 tabindex="-1">Cómo todo conecta</h1></header>
+    <p>Un problema clínico, una medida en sangre y, al final, una clase en la página. El archivo avanza una etapa a la vez.</p>
+    <ol class="recorrido">
+      <li data-txt="Cinco estudios públicos de sangre, medidos con el chip 450k. GSE147221 no entra."><b>1 · Estudios GEO</b><small>sangre, 450k</small></li>
+      <li data-txt="En R, el laboratorio deja las lecturas listas: dasen, BMIQ, y después regRCPqn con referencia GSE84727."><b>2 · Laboratorio R</b><small>antes de este trabajo</small></li>
+      <li data-txt="Cada fila es una muestra y cada columna un sitio CpG. La celda es el valor beta, entre 0 y 1."><b>3 · Matrices de betas</b><small>fila, columna, celda</small></li>
+      <li data-txt="El filtro de varianza, con umbral 0,001, pasa de 227.323 sitios a 66.441."><b>4 · Filtro de varianza</b><small>227.323 → 66.441</small></li>
+      <li data-txt="Dentro de cada pliegue, Mann-Whitney y SelectKBest eligen k. La CV anidada mide con 1.782 personas y el holdout del 20 % se mira una vez."><b>5 · Selección y medida</b><small>Mann-Whitney, k, CV, holdout</small></li>
+      <li data-txt="Se exportan los joblibs y el panel congelado. La web no vuelve a filtrar."><b>6 · Export</b><small>joblibs + panel</small></li>
+      <li data-txt="La SPA recibe un CSV ya armonizado. No ejecuta dasen, BMIQ, regRCPqn, EpiDISH, EpiSmokEr ni methylclock, ni reentrena."><b>7 · SPA</b><small>CSV ya armonizado</small></li>
+      <li data-txt="La salida es la clase SCZ o CNT y p_scz. Herramienta de investigación; no constituye diagnóstico clínico."><b>8 · Clase y p_scz</b><small>probabilidad de SCZ</small></li>
+    </ol>
+    <p class="paso-leyenda" aria-live="polite">De los estudios GEO en sangre al laboratorio en R, a las matrices de betas, al filtro de varianza, a la selección y la medida, al export y, en la SPA, a la clase y p_scz.</p>
+    <button class="paso-sig btn pri" type="button">Siguiente etapa</button>
+  </div>
+</section>
+
+<section class="pagina clara" aria-label="Fechas del cierre">
   <div class="contenido">
     <header class="cab"><p class="cap">Cierre</p><h1 tabindex="-1">Siete fechas, ya cerradas</h1></header>
     <p>El tramo final, sin el detalle de cada experimento. El módulo quedó terminado.</p>
