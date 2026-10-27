@@ -2,1819 +2,420 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Epigenética y Esquizofrenia — Guía Interactiva</title>
-<meta name="description" content="Guía interactiva de divulgación sobre el proyecto de investigación en epigenética y esquizofrenia. UDES 2026.">
-
-<style>
-/* ====================================================
-   FUENTE INSTITUCIONAL
-   ==================================================== */
-@font-face {
-  font-family: 'FranklinGothic';
-  src: url('FranklinGothic.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-/* ====================================================
-   VARIABLES
-   ==================================================== */
-:root {
-  --azul:        #1049ac;
-  --azul-mid:    #1859cc;
-  --azul-oscuro: #0b3578;
-  --azul-claro:  #e4ecf8;
-  --blanco:      #fefeff;
-  --gris-fondo:  #f3f2f7;
-  --gris-medio:  #e8e7ef;
-  --amarillo:    #F6AD24;
-  --amarillo-d:  #d4900e;
-  --negro:       #191919;
-  --muted:       #5a5a72;
-  --radio:       16px;
-  --radio-sm:    9px;
-  --trans:       0.48s cubic-bezier(.4,0,.2,1);
-  /* Espacio reservado para barra inferior (puntos + contador) y gestos seguros */
-  --inferior-ui: 5.65rem;
-}
-
-/* ====================================================
-   RESET
-   ==================================================== */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { width:100%; height:100%; overflow:hidden; }
-body {
-  font-family: 'FranklinGothic', system-ui, sans-serif;
-  background: #0a0a14;
-  color: var(--negro);
-  -webkit-font-smoothing: antialiased;
-}
-
-/* ====================================================
-   LIBRO
-   ==================================================== */
-#libro {
-  width: 100vw;
-  height: 100vh;
-  position: relative;
-  overflow: hidden;
-}
-
-/* ====================================================
-   PÁGINAS
-   ==================================================== */
-.pagina {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /* Alineación fija arriba: mismo punto de inicio en todas las diapositivas */
-  justify-content: flex-start;
-  padding: max(0.75rem, env(safe-area-inset-top)) 1.5rem calc(var(--inferior-ui) + env(safe-area-inset-bottom));
-  opacity: 0;
-  transform: translateX(80px);
-  transition: opacity var(--trans), transform var(--trans);
-  pointer-events: none;
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  scroll-behavior: smooth;
-}
-
-/* Portada: centrado vertical cuando cabe; si no cabe, el contenido empieza arriba y se puede hacer scroll (evita cortar el ícono) */
-.pagina--hero {
-  justify-content: flex-start;
-  align-items: center;
-  padding-top: max(1rem, calc(env(safe-area-inset-top) + 0.5rem));
-  padding-bottom: calc(var(--inferior-ui) + env(safe-area-inset-bottom));
-}
-.pagina--hero .contenido {
-  margin-top: auto;
-  margin-bottom: auto;
-  flex-shrink: 0;
-}
-
-.pagina.activa {
-  opacity: 1;
-  transform: translateX(0);
-  pointer-events: all;
-  z-index: 2;
-}
-
-.pagina.saliendo-izq { opacity:0; transform:translateX(-80px); z-index:1; }
-.pagina.saliendo-der { opacity:0; transform:translateX(80px);  z-index:1; }
-
-/* Tipos de fondo */
-.pagina-oscura {
-  background: linear-gradient(145deg, #0c3a9e 0%, #1049ac 55%, #0d3f8f 100%);
-  color: var(--blanco);
-}
-.pagina-clara  { background: var(--gris-fondo); color: var(--negro); }
-.pagina-blanca { background: var(--blanco);     color: var(--negro); }
-
-/* Textura sutil en páginas oscuras */
-.pagina-oscura::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle at 80% 20%, rgba(246,173,36,0.07) 0%, transparent 55%),
-                    radial-gradient(circle at 15% 80%, rgba(255,255,255,0.04) 0%, transparent 45%);
-  pointer-events: none;
-}
-
-/* ====================================================
-   CONTENIDO
-   ==================================================== */
-.contenido {
-  max-width: 780px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  position: relative;
-  flex-shrink: 0;
-}
-
-/* Diagramas anchos (p. ej. cap. 11): scroll horizontal local, sin cambiar de página */
-.diagrama-scroll-x {
-  width: 100%;
-  max-width: 100%;
-  overflow-x: auto;
-  overflow-y: visible;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 0.35rem;
-  margin-left: -0.25rem;
-  margin-right: -0.25rem;
-  padding-left: 0.25rem;
-  padding-right: 0.25rem;
-}
-.diagrama-scroll-x svg {
-  display: block;
-  width: 680px;
-  height: auto;
-  max-width: none;
-}
-@media (min-width: 720px) {
-  .diagrama-scroll-x {
-    overflow-x: visible;
-  }
-  .diagrama-scroll-x svg {
-    width: 100%;
-    max-width: 680px;
-  }
-  .hint-diagrama-movil {
-    display: none;
-  }
-}
-
-/* Etiqueta de capítulo */
-.etiqueta-cap {
-  font-size: 0.68rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  opacity: 0.45;
-  font-family: system-ui, sans-serif;
-  font-weight: 600;
-}
-
-/* Títulos de página */
-h1.titulo-pagina {
-  font-size: clamp(1.85rem, 4vw, 2.7rem);
-  font-family: 'FranklinGothic', system-ui, sans-serif;
-  line-height: 1.12;
-  font-weight: normal;
-  letter-spacing: -0.01em;
-}
-
-.pagina-oscura h1.titulo-pagina { color: var(--blanco); }
-.pagina-clara  h1.titulo-pagina,
-.pagina-blanca h1.titulo-pagina { color: var(--azul); }
-
-/* Línea decorativa bajo título */
-.titulo-pagina::after {
-  content: '';
-  display: block;
-  width: 40px;
-  height: 3px;
-  background: var(--amarillo);
-  border-radius: 2px;
-  margin-top: 0.6rem;
-}
-
-/* Cuerpo de texto */
-p.cuerpo {
-  font-size: 1rem;
-  line-height: 1.8;
-  font-family: system-ui, sans-serif;
-  max-width: 680px;
-}
-
-.pagina-oscura p.cuerpo { color: rgba(254,254,255,0.82); }
-.pagina-clara  p.cuerpo,
-.pagina-blanca p.cuerpo { color: var(--muted); }
-
-/* ====================================================
-   TÉRMINOS INTERACTIVOS
-   ==================================================== */
-.term {
-  cursor: help;
-  border-bottom: 2px dashed rgba(16,73,172,0.55);
-  transition: border-color 0.15s, color 0.15s;
-}
-.term:hover { border-bottom-color: var(--azul); color: var(--azul); }
-.pagina-oscura .term { border-bottom-color: rgba(246,173,36,0.6); }
-.pagina-oscura .term:hover { border-bottom-color: var(--amarillo); color: var(--amarillo); }
-.term:focus { outline: 2px solid var(--amarillo); outline-offset: 3px; border-radius: 2px; }
-
-/* ====================================================
-   TOOLTIP
-   ==================================================== */
-.tooltip {
-  position: fixed;
-  z-index: 9999;
-  background: #12122a;
-  color: #f0f0f8;
-  font-family: system-ui, sans-serif;
-  font-size: 0.8rem;
-  line-height: 1.55;
-  padding: 0.7rem 1rem;
-  border-radius: var(--radio-sm);
-  max-width: 270px;
-  pointer-events: none;
-  opacity: 0;
-  transform: translateY(8px) scale(0.97);
-  transition: opacity 0.18s, transform 0.18s;
-  border: 1px solid rgba(246,173,36,0.25);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.35);
-}
-.tooltip::before {
-  content: '';
-  display: block;
-  width: 3px;
-  height: 100%;
-  position: absolute;
-  left: 0; top: 0;
-  background: var(--amarillo);
-  border-radius: var(--radio-sm) 0 0 var(--radio-sm);
-}
-.tooltip.visible {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-.tooltip-label {
-  font-size: 0.68rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--amarillo);
-  margin-bottom: 0.3rem;
-  font-weight: 600;
-}
-
-/* ====================================================
-   ILUSTRACIONES SVG
-   ==================================================== */
-.ilustracion {
-  display: flex;
-  justify-content: center;
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.55s 0.15s, transform 0.55s 0.15s;
-}
-.pagina.activa .ilustracion { opacity:1; transform:translateY(0); }
-
-/* ====================================================
-   ANALOGÍA
-   ==================================================== */
-.analogia {
-  background: rgba(246,173,36,0.09);
-  border-left: 3px solid var(--amarillo);
-  border-radius: 0 var(--radio-sm) var(--radio-sm) 0;
-  padding: 1rem 1.2rem;
-  font-family: system-ui, sans-serif;
-  font-size: 0.95rem;
-  line-height: 1.65;
-  font-style: italic;
-  color: inherit;
-  position: relative;
-}
-.analogia::before {
-  content: '\201C';
-  position: absolute;
-  top: -0.5rem; left: 0.8rem;
-  font-size: 3rem;
-  color: var(--amarillo);
-  opacity: 0.3;
-  font-family: Georgia, serif;
-  line-height: 1;
-  pointer-events: none;
-}
-.pagina-oscura .analogia { background: rgba(246,173,36,0.12); color: rgba(254,254,255,0.88); }
-
-/* ====================================================
-   PORTADA
-   ==================================================== */
-.portada-titulo {
-  font-size: clamp(2.4rem, 7vw, 4.2rem);
-  line-height: 1.06;
-  font-family: 'FranklinGothic', system-ui, sans-serif;
-  font-weight: normal;
-  color: var(--blanco);
-  letter-spacing: -0.02em;
-}
-
-.portada-titulo::after { display: none; }
-
-.portada-sub {
-  font-size: 1.05rem;
-  color: rgba(254,254,255,0.65);
-  font-family: system-ui, sans-serif;
-  line-height: 1.65;
-  max-width: 480px;
-}
-
-/* Chip de dato en portada */
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.18);
-  border-radius: 50px;
-  padding: 0.35rem 0.85rem;
-  font-size: 0.75rem;
-  font-family: system-ui, sans-serif;
-  color: rgba(254,254,255,0.7);
-  letter-spacing: 0.04em;
-}
-.chip-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--amarillo);
-  animation: pulso-chip 2s ease-in-out infinite;
-}
-@keyframes pulso-chip {
-  0%,100% { opacity:1; transform:scale(1); }
-  50%      { opacity:0.5; transform:scale(0.8); }
-}
-
-/* ====================================================
-   BOTONES
-   ==================================================== */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  padding: 0.9rem 1.9rem;
-  border-radius: 50px;
-  border: none;
-  cursor: pointer;
-  font-size: 0.92rem;
-  font-family: 'FranklinGothic', system-ui, sans-serif;
-  transition: transform 0.15s, box-shadow 0.2s, background 0.15s, opacity 0.15s;
-  text-decoration: none;
-  letter-spacing: 0.02em;
-}
-.btn:hover  { transform: translateY(-2px); }
-.btn:active { transform: scale(0.96); }
-
-.btn-primario {
-  background: var(--amarillo);
-  color: var(--negro);
-  box-shadow: 0 4px 20px rgba(246,173,36,0.3);
-}
-.btn-primario:hover { background: #f5b830; box-shadow: 0 8px 28px rgba(246,173,36,0.45); }
-
-.btn-ghost {
-  background: rgba(255,255,255,0.1);
-  color: var(--blanco);
-  border: 1.5px solid rgba(255,255,255,0.22);
-}
-.btn-ghost:hover { background: rgba(255,255,255,0.2); }
-
-/* Acciones de portada + integrantes en flujo normal (evita solaparse con la barra inferior) */
-.portada-acciones {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-top: 0.35rem;
-}
-.portada-integrantes {
-  margin-top: clamp(1.75rem, 5vh, 2.75rem);
-  padding-top: clamp(1rem, 2.5vh, 1.5rem);
-  border-top: 1px solid rgba(255, 255, 255, 0.14);
-  text-align: center;
-  font-size: 0.68rem;
-  line-height: 1.55;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(254, 254, 255, 0.38);
-  font-family: system-ui, sans-serif;
-  max-width: 34rem;
-  margin-left: auto;
-  margin-right: auto;
-}
-.portada-contenido {
-  align-items: center;
-  text-align: center;
-}
-.portada-marca-adn {
-  padding-top: 0.25rem;
-  margin-top: 0.15rem;
-}
-
-/* ====================================================
-   CIERRE
-   ==================================================== */
-.resumen-items { display:flex; flex-direction:column; gap:0.9rem; width:100%; max-width:600px; text-align: left; }
-
-.resumen-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 1.1rem;
-  background: rgba(255,255,255,0.07);
-  border-radius: var(--radio);
-  padding: 1rem 1rem;
-  border: 1px solid rgba(255,255,255,0.1);
-  transition: background 0.2s, border-color 0.2s;
-}
-.resumen-item:hover {
-  background: rgba(255,255,255,0.11);
-  border-color: rgba(246,173,36,0.3);
-}
-
-.resumen-num {
-  font-size: 1.8rem;
-  font-family: 'FranklinGothic', system-ui, sans-serif;
-  color: var(--amarillo);
-  line-height: 1;
-  min-width: 2rem;
-  opacity: 0.85;
-}
-
-.resumen-texto {
-  font-family: system-ui, sans-serif;
-  font-size: 0.91rem;
-  line-height: 1.6;
-  color: rgba(254,254,255,0.8);
-}
-
-/* ====================================================
-   CRÉDITOS EN CIERRE
-   ==================================================== */
-.creditos {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 1.5rem;
-  justify-content: center;
-  margin-top: 0.5rem;
-}
-.credito-item {
-  font-size: 0.72rem;
-  font-family: system-ui, sans-serif;
-  color: rgba(254,254,255,0.35);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-.contenido-cierre {
-  align-items: center;
-  text-align: center;
-  gap: 1.15rem;
-}
-
-/* --- Capítulo 12: cierre centrado y legible --- */
-.pagina-cierre {
-  justify-content: center;
-  align-items: center;
-  padding-top: max(0.75rem, env(safe-area-inset-top));
-  padding-bottom: calc(var(--inferior-ui) + env(safe-area-inset-bottom));
-}
-.pagina-cierre .contenido-cierre {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  text-align: center;
-  gap: 0.85rem;
-  max-width: 28rem;
-  width: 100%;
-  margin-top: auto;
-  margin-bottom: auto;
-}
-.pagina-cierre.activa .contenido > * {
-  animation: none;
-  opacity: 1;
-  transform: none;
-}
-.pagina-cierre .cabecera-cierre {
-  text-align: center;
-  width: 100%;
-}
-.pagina-cierre .cabecera-cierre .etiqueta-cap {
-  margin-bottom: 0.15rem;
-}
-.pagina-cierre h1.titulo-cierre {
-  font-size: clamp(1.35rem, 5vw, 1.95rem);
-  line-height: 1.2;
-  color: var(--blanco);
-  margin: 0;
-}
-.pagina-cierre h1.titulo-cierre::after {
-  display: none;
-}
-.pagina-cierre .meta-cierre {
-  font-size: 0.72rem;
-  line-height: 1.35;
-  color: rgba(254, 254, 255, 0.55);
-  font-family: system-ui, sans-serif;
-  margin: 0;
-}
-/* Lista de tres pilares: compacta, sin tarjetas altas */
-.resumen-compacto {
-  list-style: none;
-  margin: 0.35rem 0 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  text-align: left;
-  width: 100%;
-}
-.resumen-compacto li {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.45rem 0.55rem;
-  align-items: start;
-  padding: 0.45rem 0.55rem;
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  font-family: system-ui, sans-serif;
-  font-size: 0.78rem;
-  line-height: 1.45;
-  color: rgba(254, 254, 255, 0.82);
-}
-.resumen-compacto .pill {
-  align-self: start;
-  margin-top: 0.1rem;
-  min-width: 1.35rem;
-  height: 1.35rem;
-  border-radius: 6px;
-  background: var(--amarillo);
-  color: var(--negro);
-  font-weight: 800;
-  font-size: 0.68rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'FranklinGothic', system-ui, sans-serif;
-}
-.resumen-compacto strong {
-  display: block;
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: rgba(254, 254, 255, 0.95);
-  letter-spacing: 0.02em;
-  margin-bottom: 0.08rem;
-}
-.creditos-linea {
-  font-size: 0.58rem;
-  line-height: 1.4;
-  color: rgba(254, 254, 255, 0.38);
-  font-family: system-ui, sans-serif;
-  letter-spacing: 0.04em;
-  text-align: center;
-  margin: 0;
-  padding: 0 0.25rem;
-}
-.cierre-pie {
-  margin-top: 0.45rem;
-  padding-top: 0.9rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.14);
-}
-.cierre-pie .creditos-linea {
-  margin-bottom: 0.7rem;
-}
-.acciones-cierre {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  justify-content: center;
-  margin-top: 0;
-}
-.pagina-cierre .btn-compacto {
-  padding: 0.55rem 1.1rem;
-  font-size: 0.8rem;
-}
-
-/* ====================================================
-   COMPARACIÓN DOS COLUMNAS
-   ==================================================== */
-.dos-cols { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-
-.col-card {
-  background: var(--blanco);
-  border: 1px solid var(--gris-medio);
-  border-radius: var(--radio);
-  padding: 1.1rem 1.2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-}
-.col-card .col-titulo {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-family: system-ui, sans-serif;
-}
-.col-card .col-valor {
-  font-size: 0.88rem;
-  color: var(--muted);
-  font-family: system-ui, sans-serif;
-  line-height: 1.55;
-}
-.col-card.mala  { border-top: 3px solid #c0392b; }
-.col-card.mala  .col-titulo { color: #922b21; }
-.col-card.buena { border-top: 3px solid #1e8449; }
-.col-card.buena .col-titulo { color: #1a5e37; }
-
-/* ====================================================
-   NAVEGACIÓN LATERAL
-   ==================================================== */
-#nav-anterior, #nav-siguiente {
-  position: fixed;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 200;
-  /* Contraste alto sobre fondos claros u oscuros */
-  background: var(--azul);
-  border: 2px solid var(--azul-oscuro);
-  color: var(--blanco);
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  font-weight: 700;
-  box-shadow: 0 4px 14px rgba(16, 73, 172, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.2) inset;
-  transition: background 0.2s, border-color 0.2s, opacity 0.25s, transform 0.15s, box-shadow 0.2s;
-}
-#nav-anterior { left: max(0.5rem, env(safe-area-inset-left)); }
-#nav-siguiente { right: max(0.5rem, env(safe-area-inset-right)); }
-#nav-anterior:hover, #nav-siguiente:hover {
-  background: var(--azul-mid);
-  border-color: var(--azul);
-  box-shadow: 0 6px 20px rgba(16, 73, 172, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.25) inset;
-}
-#nav-anterior:focus-visible,
-#nav-siguiente:focus-visible {
-  outline: 3px solid var(--amarillo);
-  outline-offset: 3px;
-}
-#nav-anterior:active { transform: translateY(-50%) scale(0.92) translateX(-2px); }
-#nav-siguiente:active { transform: translateY(-50%) scale(0.92) translateX(2px); }
-#nav-anterior.oculto, #nav-siguiente.oculto { opacity:0; pointer-events:none; }
-
-/* Hint de teclado — aparece al inicio */
-#hint-teclado {
-  position: fixed;
-  bottom: calc(var(--inferior-ui) + 0.35rem);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.68rem;
-  font-family: system-ui, sans-serif;
-  color: rgba(255,255,255,0.4);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  transition: opacity 0.5s;
-  pointer-events: none;
-}
-.tecla {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px; height: 22px;
-  border: 1px solid rgba(255,255,255,0.25);
-  border-radius: 4px;
-  font-size: 0.75rem;
-  background: rgba(255,255,255,0.06);
-}
-
-/* ====================================================
-   BARRA DE PROGRESO (línea superior)
-   ==================================================== */
-#barra-progreso {
-  position: fixed;
-  top: 0; left: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--amarillo), #f5c842);
-  border-radius: 0 2px 2px 0;
-  z-index: 300;
-  transition: width 0.4s cubic-bezier(.4,0,.2,1);
-  box-shadow: 0 0 10px rgba(246,173,36,0.5);
-}
-
-/* ====================================================
-   PUNTOS DE PROGRESO
-   ==================================================== */
-#progreso {
-  position: fixed;
-  bottom: max(0.6rem, env(safe-area-inset-bottom));
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  background: rgba(16, 73, 172, 0.92);
-  padding: 0.45rem 0.85rem;
-  border-radius: 50px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
-  max-width: calc(100vw - 7rem);
-}
-
-.punto {
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.35);
-  cursor: pointer;
-  transition: background 0.25s, transform 0.25s, width 0.25s;
-  border: none;
-  padding: 0;
-}
-.punto.activo {
-  background: var(--amarillo);
-  transform: scale(1.35);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35);
-}
-.punto:hover:not(.activo) {
-  background: rgba(255,255,255,0.65);
-  transform: scale(1.15);
-}
-
-#contador-pagina {
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.88);
-  font-family: system-ui, sans-serif;
-  letter-spacing: 0.06em;
-  font-weight: 600;
-  min-width: 2.8rem;
-  text-align: center;
-  margin-left: 0.2rem;
-}
-
-/* ====================================================
-   ANIMACIONES SVG
-   ==================================================== */
-@keyframes pulso {
-  0%,100% { opacity:1; transform:scale(1); }
-  50%      { opacity:0.65; transform:scale(1.3); }
-}
-@keyframes flotar {
-  0%,100% { transform: translateY(0); }
-  50%      { transform: translateY(-3px); }
-}
-@keyframes dibujar {
-  from { stroke-dashoffset: 400; }
-  to   { stroke-dashoffset: 0; }
-}
-@keyframes aparecer {
-  from { opacity:0; transform:scale(0.8); }
-  to   { opacity:1; transform:scale(1); }
-}
-@keyframes rotar-lento {
-  from { transform-origin: center; transform: rotate(0deg); }
-  to   { transform-origin: center; transform: rotate(360deg); }
-}
-
-.metil-punto { animation: pulso 2.2s ease-in-out infinite; }
-.metil-punto-b { animation: pulso 2.2s ease-in-out 0.7s infinite; }
-.metil-punto-c { animation: pulso 2.2s ease-in-out 1.4s infinite; }
-.linea-firma { stroke-dasharray:400; animation: dibujar 1.6s ease 0.4s forwards; stroke-dashoffset:400; }
-.svg-flotar { animation: flotar 4s ease-in-out infinite; }
-
-/* Entrada de contenido por elemento */
-.pagina.activa .contenido > * {
-  animation: aparecer 0.4s ease both;
-}
-.pagina.activa .contenido > *:nth-child(1) { animation-delay: 0.05s; }
-.pagina.activa .contenido > *:nth-child(2) { animation-delay: 0.12s; }
-.pagina.activa .contenido > *:nth-child(3) { animation-delay: 0.19s; }
-.pagina.activa .contenido > *:nth-child(4) { animation-delay: 0.26s; }
-.pagina.activa .contenido > *:nth-child(5) { animation-delay: 0.33s; }
-.pagina.activa .contenido > *:nth-child(6) { animation-delay: 0.40s; }
-
-/* ====================================================
-   RESPONSIVE
-   ==================================================== */
-@media (max-width: 680px) {
-  .pagina {
-    padding-left: 1.1rem;
-    padding-right: 1.1rem;
-    padding-bottom: calc(var(--inferior-ui) + 0.35rem + env(safe-area-inset-bottom));
-  }
-  .dos-cols       { grid-template-columns: 1fr; }
-  #nav-anterior   { width: 42px; height: 42px; font-size: 1.05rem; }
-  #nav-siguiente  { width: 42px; height: 42px; font-size: 1.05rem; }
-  .portada-titulo { font-size: 2rem; }
-  h1.titulo-pagina { font-size: 1.65rem; }
-  #hint-teclado   { display: none; }
-  .creditos       { flex-direction: column; align-items: center; gap: 0.3rem; }
-  .resumen-item   { padding: 0.85rem 0.75rem; gap: 0.75rem; }
-  .resumen-num    { font-size: 1.45rem; min-width: 1.6rem; }
-  .resumen-texto  { font-size: 0.86rem; }
-  .pagina-cierre .resumen-compacto li {
-    font-size: 0.74rem;
-    padding: 0.4rem 0.5rem;
-  }
-  .portada-integrantes {
-    font-size: 0.6rem;
-    letter-spacing: 0.07em;
-    line-height: 1.5;
-  }
-}
-
-/* ====================================================
-   SCROLL INTERNO SUAVE
-   ==================================================== */
-.pagina::-webkit-scrollbar { width: 4px; }
-.pagina::-webkit-scrollbar-track { background: transparent; }
-.pagina::-webkit-scrollbar-thumb { background: rgba(16,73,172,0.25); border-radius: 2px; }
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1049ac">
+<title>Epigenética y Esquizofrenia | Guía Interactiva</title>
+<meta name="description" content="Guía interactiva de divulgación sobre el proyecto de grado en epigenética y esquizofrenia. UDES 2026.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231049ac'/%3E%3Cpath d='M6 11q5 8 10 0t10 0M6 21q5-8 10 0t10 0' stroke='%23F6AD24' stroke-width='3' fill='none'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/styles.css">
+<noscript><link rel="stylesheet" href="css/noscript.css"></noscript>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="adn" viewBox="0 0 360 110" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M10 32Q55 58 100 32T190 32T280 32T350 32" stroke-width="4"/><path d="M10 76Q55 50 100 76T190 76T280 76T350 76" stroke-width="4" opacity=".5"/><path d="M100 32V76M190 32V76M280 32V76M55 46V62M145 46V62M235 46V62M325 46V62" stroke-width="2" opacity=".4"/></symbol></svg>
 
-<!-- Tooltip singleton -->
-<div id="tooltip" class="tooltip" role="tooltip" aria-live="polite">
-  <div class="tooltip-label" id="tooltip-label"></div>
-  <div id="tooltip-def"></div>
-</div>
+<div id="tip" role="tooltip"></div>
+<div id="top"></div>
+<button id="ant" class="lado" type="button" aria-label="Página anterior"></button>
+<button id="sig" class="lado" type="button" aria-label="Página siguiente"></button>
+<div id="hint" aria-hidden="true">Use las flechas del teclado para navegar</div>
+<nav id="progreso" aria-label="Progreso de lectura"></nav>
 
-<!-- Barra de progreso superior -->
-<div id="barra-progreso"></div>
+<main id="libro">
 
-<!-- Navegación lateral -->
-<button id="nav-anterior" aria-label="Página anterior" class="oculto">&#8592;</button>
-<button id="nav-siguiente" aria-label="Página siguiente">&#8594;</button>
-
-<!-- Hint de teclado (desaparece tras interacción) -->
-<div id="hint-teclado" aria-hidden="true">
-  <span class="tecla">←</span>
-  <span class="tecla">→</span>
-  navegar
-</div>
-
-<!-- Puntos de progreso -->
-<div id="progreso" role="navigation" aria-label="Progreso de lectura"></div>
-
-<!-- ============================================================
-     LIBRO
-     ============================================================ -->
-<div id="libro" role="main">
-
-<!-- ======================================================
-     PÁGINA 0 — PORTADA
-     ====================================================== -->
-<section class="pagina pagina-oscura pagina--hero" data-pagina="0" aria-label="Portada">
-  <div class="contenido portada-contenido" style="gap:2.2rem;">
-    <!-- ADN decorativo -->
-    <div class="portada-marca-adn svg-flotar" style="opacity:0.6;" aria-hidden="true">
-      <svg width="72" height="30" viewBox="0 0 72 30" fill="none" aria-hidden="true">
-        <path d="M4 8 Q18 15 32 8 Q46 1 60 8 Q66 11 70 10" stroke="rgba(246,173,36,0.8)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-        <path d="M4 22 Q18 15 32 22 Q46 29 60 22 Q66 19 70 20" stroke="rgba(246,173,36,0.45)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-        <line x1="18" y1="11" x2="18" y2="19" stroke="rgba(246,173,36,0.55)" stroke-width="1.6"/>
-        <line x1="32" y1="8"  x2="32" y2="22" stroke="rgba(246,173,36,0.55)" stroke-width="1.6"/>
-        <line x1="46" y1="11" x2="46" y2="19" stroke="rgba(246,173,36,0.55)" stroke-width="1.6"/>
-        <line x1="60" y1="8"  x2="60" y2="22" stroke="rgba(246,173,36,0.55)" stroke-width="1.6"/>
-      </svg>
+<section class="pagina oscura hero" aria-label="Portada">
+  <div class="contenido">
+    <svg class="adn" viewBox="0 0 360 110" aria-hidden="true"><use href="#adn"/></svg>
+    <div class="acciones"><span class="pill">Proyecto de grado · 2026</span><span class="pill">UDES · Ingeniería de Software</span></div>
+    <h1 tabindex="-1">¿Cómo funciona este proyecto?</h1>
+    <p>Una guía para entender la investigación sobre epigenética y esquizofrenia, escrita para cualquier lector.</p>
+    <div class="acciones">
+      <button class="btn pri" type="button" onclick="ir(1)">Comenzar</button>
+      <button class="btn sec" type="button" onclick="ir(19)">Ver resumen</button>
     </div>
-
-    <div class="portada-chips">
-      <span class="chip"><span class="chip-dot"></span>Proyecto de grado · 2026</span>
-      <span class="chip">UDES · Ing. de Software</span>
-    </div>
-
-    <h1 class="portada-titulo">¿Cómo funciona<br>este proyecto?</h1>
-
-    <p class="portada-sub">
-      Una guía para entender la investigación sobre
-      <strong style="color:var(--amarillo);font-weight:normal;">epigenética</strong> y
-      <strong style="color:var(--amarillo);font-weight:normal;">esquizofrenia</strong>,
-      pensada para cualquier lector.
-    </p>
-
-    <div class="portada-acciones">
-      <button type="button" class="btn btn-primario" onclick="irA(1)" aria-label="Comenzar la lectura">
-        Comenzar &nbsp;&#8594;
-      </button>
-      <button type="button" class="btn btn-ghost" onclick="irA(12)" aria-label="Ver resumen del proyecto">
-        Ver resumen
-      </button>
-    </div>
-
-    <p class="portada-integrantes" role="note">
-      Santiago Cacua Villamizar &nbsp;·&nbsp; Director: E. Pinzón &nbsp;·&nbsp; Codirectores: H. Hernández · N. Farelo
-    </p>
+    <p class="firma">Santiago Cacua Villamizar<br>Director: E. Pinzón · Codirectores: H. Hernández y N. Farelo</p>
   </div>
 </section>
 
-<!-- ======================================================
-     PÁGINA 1 — EL ADN
-     ====================================================== -->
-<section class="pagina pagina-clara" data-pagina="1" aria-label="El ADN">
+<section class="pagina clara" aria-label="El ADN">
   <div class="contenido">
-    <p class="etiqueta-cap">Capítulo 1</p>
-    <h1 class="titulo-pagina">Todo empieza en el ADN</h1>
-
-    <div class="ilustracion">
-      <svg width="360" height="108" viewBox="0 0 360 108" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Doble hélice de ADN con segmentos etiquetados como genes">
-        <!-- Hebra superior -->
-        <path d="M10 32 Q55 58 100 32 Q145 6 190 32 Q235 58 280 32 Q315 14 348 24"
-              stroke="#1049ac" stroke-width="3" fill="none" stroke-linecap="round"/>
-        <!-- Hebra inferior -->
-        <path d="M10 76 Q55 50 100 76 Q145 102 190 76 Q235 50 280 76 Q315 92 348 84"
-              stroke="#1049ac" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.5"/>
-        <!-- Barras (pares de bases) -->
-        <line x1="55"  y1="46" x2="55"  y2="62" stroke="#1049ac" stroke-width="1.8" opacity="0.4"/>
-        <line x1="100" y1="32" x2="100" y2="76" stroke="#1049ac" stroke-width="1.8" opacity="0.4"/>
-        <line x1="145" y1="46" x2="145" y2="62" stroke="#1049ac" stroke-width="1.8" opacity="0.4"/>
-        <line x1="190" y1="32" x2="190" y2="76" stroke="#1049ac" stroke-width="1.8" opacity="0.4"/>
-        <line x1="235" y1="46" x2="235" y2="62" stroke="#1049ac" stroke-width="1.8" opacity="0.4"/>
-        <line x1="280" y1="32" x2="280" y2="76" stroke="#1049ac" stroke-width="1.8" opacity="0.4"/>
-        <line x1="325" y1="40" x2="325" y2="68" stroke="#1049ac" stroke-width="1.8" opacity="0.3"/>
-        <!-- Genes destacados -->
-        <rect x="80"  y="48" width="40" height="17" rx="5" fill="#F6AD24" opacity="0.95"/>
-        <text x="100" y="60" text-anchor="middle" font-size="9.5" font-family="system-ui" fill="#191919" font-weight="700">gen A</text>
-        <rect x="170" y="48" width="40" height="17" rx="5" fill="#F6AD24" opacity="0.95"/>
-        <text x="190" y="60" text-anchor="middle" font-size="9.5" font-family="system-ui" fill="#191919" font-weight="700">gen B</text>
-        <rect x="260" y="48" width="40" height="17" rx="5" fill="#F6AD24" opacity="0.7"/>
-        <text x="280" y="60" text-anchor="middle" font-size="9.5" font-family="system-ui" fill="#191919" font-weight="700">gen C</text>
-        <!-- Etiqueta ADN -->
-        <text x="6"  y="25" font-size="10" font-family="system-ui" fill="#1049ac" opacity="0.55" font-weight="600">ADN</text>
-        <!-- Flecha etiqueta -->
-        <text x="6"  y="82" font-size="10" font-family="system-ui" fill="#1049ac" opacity="0.35">~3.000 millones de pares de bases</text>
-      </svg>
-    </div>
-
-    <p class="cuerpo">
-      El <span class="term" tabindex="0" data-term="ADN" data-def="Ácido desoxirribonucleico. La molécula que guarda las instrucciones completas para construir y operar un organismo. Está presente en casi todas las células del cuerpo.">ADN</span> es el conjunto completo de instrucciones que determina cómo se construye y funciona un organismo. Está organizado en <span class="term" tabindex="0" data-term="genes" data-def="Segmentos específicos del ADN, cada uno encargado de una función: producir una proteína, regular otra función biológica, etc. El humano tiene entre 20.000 y 25.000 genes.">genes</span>, cada uno encargado de algo distinto: cómo funciona el hígado, cómo se desarrolla el cerebro, el color de los ojos.
-    </p>
-    <p class="cuerpo">
-      Sin embargo, el cuerpo no lee todos los genes al mismo tiempo ni en todas las células. Hay mecanismos que regulan qué se lee y qué no — y eso es precisamente lo que estudia la epigenética.
-    </p>
-  </div>
-</section>
-
-<!-- ======================================================
-     PÁGINA 2 — LA EPIGENÉTICA
-     ====================================================== -->
-<section class="pagina pagina-blanca" data-pagina="2" aria-label="La epigenética">
-  <div class="contenido">
-    <p class="etiqueta-cap">Capítulo 2</p>
-    <h1 class="titulo-pagina">Las notas al margen del manual</h1>
-
-    <div class="ilustracion">
-      <svg width="210" height="130" viewBox="0 0 210 130" fill="none" aria-label="Libro abierto con anotaciones epigenéticas">
-        <!-- Sombra libro -->
-        <ellipse cx="105" cy="125" rx="80" ry="6" fill="rgba(16,73,172,0.07)"/>
-        <!-- Página izquierda -->
-        <rect x="10" y="15" width="85" height="100" rx="4" fill="#e4ecf8" stroke="#1049ac" stroke-width="1.5"/>
-        <!-- Líneas texto izq -->
-        <line x1="22" y1="35" x2="83" y2="35" stroke="#1049ac" stroke-width="1.1" opacity="0.3"/>
-        <line x1="22" y1="46" x2="83" y2="46" stroke="#1049ac" stroke-width="1.1" opacity="0.3"/>
-        <line x1="22" y1="57" x2="70" y2="57" stroke="#1049ac" stroke-width="1.1" opacity="0.3"/>
-        <line x1="22" y1="68" x2="83" y2="68" stroke="#1049ac" stroke-width="1.1" opacity="0.3"/>
-        <line x1="22" y1="79" x2="60" y2="79" stroke="#1049ac" stroke-width="1.1" opacity="0.3"/>
-        <line x1="22" y1="90" x2="83" y2="90" stroke="#1049ac" stroke-width="1.1" opacity="0.3"/>
-        <line x1="22" y1="101" x2="50" y2="101" stroke="#1049ac" stroke-width="1.1" opacity="0.3"/>
-        <!-- Lomo -->
-        <rect x="93" y="15" width="24" height="100" fill="rgba(16,73,172,0.12)"/>
-        <line x1="105" y1="15" x2="105" y2="115" stroke="#1049ac" stroke-width="1" opacity="0.3"/>
-        <!-- Página derecha -->
-        <rect x="115" y="15" width="85" height="100" rx="4" fill="#e4ecf8" stroke="#1049ac" stroke-width="1.5"/>
-        <!-- Resaltadores página der -->
-        <rect x="125" y="31" width="62" height="11" rx="3" fill="rgba(246,173,36,0.5)"/>
-        <rect x="125" y="51" width="44" height="11" rx="3" fill="rgba(246,173,36,0.3)"/>
-        <line x1="125" y1="70" x2="187" y2="70" stroke="#1049ac" stroke-width="1.1" opacity="0.3"/>
-        <line x1="125" y1="81" x2="165" y2="81" stroke="#1049ac" stroke-width="1.1" opacity="0.3"/>
-        <line x1="125" y1="92" x2="187" y2="92" stroke="#1049ac" stroke-width="1.1" opacity="0.3"/>
-        <!-- Nota adhesiva -->
-        <rect x="155" y="52" width="34" height="26" rx="3" fill="rgba(246,173,36,0.8)" transform="rotate(-6 155 52)"/>
-        <text x="172" y="67" text-anchor="middle" font-size="7.5" font-family="system-ui" fill="#191919" transform="rotate(-6 172 67)" font-weight="600">¡epigen!</text>
-        <!-- Marcador de página -->
-        <rect x="172" y="11" width="11" height="32" rx="2" fill="#F6AD24"/>
-        <polygon points="172,43 177.5,50 183,43" fill="#F6AD24"/>
-      </svg>
-    </div>
-
-    <p class="cuerpo">
-      La <span class="term" tabindex="0" data-term="epigenética" data-def="Rama de la biología que estudia cambios en la expresión de los genes sin alterar la secuencia del ADN. Estas marcas pueden ser heredables y son influenciadas por el entorno.">epigenética</span> estudia cómo se regula la expresión de los genes sin cambiar la secuencia del ADN.
-    </p>
-
-    <div class="analogia">
-      Imagine el ADN como el texto de un libro: la epigenética son las notas al margen, los resaltadores y las páginas dobladas. El texto no cambia, pero esas marcas cambian completamente lo que el lector atiende.
-    </div>
-
-    <p class="cuerpo">
-      Estas marcas pueden aparecer por la edad, el ambiente, el estrés, la alimentación, y en algunos casos están asociadas a enfermedades como la esquizofrenia.
-    </p>
-  </div>
-</section>
-
-<!-- ======================================================
-     PÁGINA 3 — METILACIÓN
-     ====================================================== -->
-<section class="pagina pagina-clara" data-pagina="3" aria-label="La metilación del ADN">
-  <div class="contenido">
-    <p class="etiqueta-cap">Capítulo 3</p>
-    <h1 class="titulo-pagina">El sello que silencia genes</h1>
-
-    <div class="ilustracion">
-      <svg width="370" height="105" viewBox="0 0 370 105" fill="none" aria-label="Segmento de ADN con grupos metilo sobre ciertas posiciones">
-        <!-- Hebra superior -->
-        <path d="M15 38 Q58 58 100 38 Q142 18 185 38 Q228 58 270 38 Q310 20 355 32"
-              stroke="#1049ac" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-        <!-- Hebra inferior -->
-        <path d="M15 70 Q58 50 100 70 Q142 90 185 70 Q228 50 270 70 Q310 86 355 76"
-              stroke="#1049ac" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.5"/>
-        <!-- Barras -->
-        <line x1="58"  y1="46" x2="58"  y2="62" stroke="#1049ac" stroke-width="1.5" opacity="0.4"/>
-        <line x1="100" y1="38" x2="100" y2="70" stroke="#1049ac" stroke-width="1.5" opacity="0.4"/>
-        <line x1="142" y1="46" x2="142" y2="62" stroke="#1049ac" stroke-width="1.5" opacity="0.4"/>
-        <line x1="185" y1="38" x2="185" y2="70" stroke="#1049ac" stroke-width="1.5" opacity="0.4"/>
-        <line x1="228" y1="46" x2="228" y2="62" stroke="#1049ac" stroke-width="1.5" opacity="0.4"/>
-        <line x1="270" y1="38" x2="270" y2="70" stroke="#1049ac" stroke-width="1.5" opacity="0.4"/>
-        <line x1="312" y1="44" x2="312" y2="64" stroke="#1049ac" stroke-width="1.5" opacity="0.4"/>
-        <!-- Grupos metilo -->
-        <circle class="metil-punto"   cx="100" cy="24" r="7" fill="#F6AD24"/>
-        <line x1="100" y1="31" x2="100" y2="38" stroke="#F6AD24" stroke-width="1.8"/>
-        <text x="100" y="17" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="#a07000" font-weight="700">CH₃</text>
-        <circle class="metil-punto-b" cx="185" cy="24" r="7" fill="#F6AD24"/>
-        <line x1="185" y1="31" x2="185" y2="38" stroke="#F6AD24" stroke-width="1.8"/>
-        <text x="185" y="17" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="#a07000" font-weight="700">CH₃</text>
-        <circle class="metil-punto-c" cx="270" cy="24" r="7" fill="#F6AD24"/>
-        <line x1="270" y1="31" x2="270" y2="38" stroke="#F6AD24" stroke-width="1.8"/>
-        <text x="270" y="17" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="#a07000" font-weight="700">CH₃</text>
-        <!-- Badge gen silenciado -->
-        <rect x="158" y="78" width="54" height="16" rx="4" fill="rgba(162,45,45,0.12)" stroke="#922b21" stroke-width="0.8"/>
-        <text x="185" y="89" text-anchor="middle" font-size="8" font-family="system-ui" fill="#922b21" font-weight="600">silenciado ✕</text>
-        <!-- Badge gen activo -->
-        <rect x="24" y="78" width="50" height="16" rx="4" fill="rgba(30,132,73,0.1)" stroke="#1e8449" stroke-width="0.8"/>
-        <text x="49" y="89" text-anchor="middle" font-size="8" font-family="system-ui" fill="#1e8449" font-weight="600">activo ✓</text>
-      </svg>
-    </div>
-
-    <p class="cuerpo">
-      Uno de los mecanismos epigenéticos más estudiados es la <span class="term" tabindex="0" data-term="metilación del ADN" data-def="Proceso en el que un grupo metilo (CH₃) se adhiere a posiciones específicas del ADN (citosinas), generalmente silenciando el gen afectado sin modificar su secuencia.">metilación del ADN</span>. Consiste en añadir un <span class="term" tabindex="0" data-term="grupo metilo" data-def="Molécula pequeña (CH₃) que actúa como interruptor: cuando se fija sobre el ADN, típicamente apaga el gen en esa región.">grupo metilo</span> sobre ciertas posiciones del genoma, lo que puede silenciar genes sin modificar el texto genético.
-    </p>
-    <p class="cuerpo">
-      Para medirlo de forma masiva, se utiliza el <span class="term" tabindex="0" data-term="chip Illumina HM450" data-def="Microchip de laboratorio (Illumina HumanMethylation450 BeadChip) que mide simultáneamente el nivel de metilación en ~450.000 posiciones del genoma humano.">chip Illumina HumanMethylation450</span>, que permite leer el estado de metilación en aproximadamente 450.000 posiciones del genoma al mismo tiempo.
-    </p>
-  </div>
-</section>
-
-<!-- ======================================================
-     PÁGINA 4 — EL FENOTIPO
-     ====================================================== -->
-<section class="pagina pagina-blanca" data-pagina="4" aria-label="El fenotipo">
-  <div class="contenido">
-    <p class="etiqueta-cap">Capítulo 4</p>
-    <h1 class="titulo-pagina">La receta y el plato</h1>
-
-    <div class="ilustracion">
-      <svg width="300" height="95" viewBox="0 0 300 95" fill="none" aria-label="Comparación entre genotipo (receta) y fenotipo (plato resultante)">
-        <!-- Hoja de receta -->
-        <rect x="8"  y="14" width="82" height="68" rx="5" fill="#e4ecf8" stroke="#1049ac" stroke-width="1.5"/>
-        <text x="49" y="28" text-anchor="middle" font-size="9" font-family="system-ui" fill="#1049ac" font-weight="700" letter-spacing="0.08em">GENOTIPO</text>
-        <line x1="20" y1="36" x2="78" y2="36" stroke="#1049ac" stroke-width="1" opacity="0.35"/>
-        <line x1="20" y1="46" x2="65" y2="46" stroke="#1049ac" stroke-width="1" opacity="0.35"/>
-        <line x1="20" y1="56" x2="78" y2="56" stroke="#1049ac" stroke-width="1" opacity="0.35"/>
-        <line x1="20" y1="66" x2="55" y2="66" stroke="#1049ac" stroke-width="1" opacity="0.35"/>
-        <text x="49" y="85" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="#1049ac" opacity="0.5">= la receta</text>
-        <!-- Flecha con entorno -->
-        <path d="M92 50 Q148 24 198 50" stroke="#F6AD24" stroke-width="2" fill="none" stroke-dasharray="6 3"/>
-        <polygon points="198,44 208,50 198,56" fill="#F6AD24"/>
-        <text x="150" y="21" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="#a07000">+ vida &amp; entorno</text>
-        <!-- Plato -->
-        <ellipse cx="237" cy="64" rx="44" ry="13" fill="#e4ecf8" stroke="#1049ac" stroke-width="1.5"/>
-        <ellipse cx="237" cy="57" rx="33" ry="24" fill="#f3f2f7" stroke="#1049ac" stroke-width="1.5"/>
-        <circle  cx="237" cy="50" r="16" fill="rgba(246,173,36,0.2)"/>
-        <circle  cx="237" cy="48" r="9"  fill="rgba(246,173,36,0.65)"/>
-        <text x="237" y="85" text-anchor="middle" font-size="9" font-family="system-ui" fill="#1049ac" font-weight="700" letter-spacing="0.08em">FENOTIPO</text>
-        <text x="237" y="95" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="#1049ac" opacity="0.5">= el plato</text>
-      </svg>
-    </div>
-
-    <p class="cuerpo">
-      El <span class="term" tabindex="0" data-term="fenotipo" data-def="Conjunto de características observables de una persona: apariencia, comportamiento, condiciones de salud. Es el resultado de combinar la genética con todo lo que le ha ocurrido en su vida.">fenotipo</span> es el conjunto de características observables de una persona: su apariencia, su comportamiento, sus condiciones de salud. Es el resultado de combinar la información genética con el entorno a lo largo de la vida.
-    </p>
-
-    <div class="analogia">
-      El genotipo es la receta. El fenotipo es el plato que salió — dos cocineros con la misma receta pueden obtener resultados distintos.
-    </div>
-
-    <p class="cuerpo">
-      En este proyecto, el fenotipo clave es el <span class="term" tabindex="0" data-term="diagnóstico clínico" data-def="Resultado de la evaluación psiquiátrica que determina si una persona tiene o no esquizofrenia. Es la variable objetivo (etiqueta) con la que se entrena el modelo.">diagnóstico clínico</span>: si la persona tiene o no esquizofrenia. Esa etiqueta guía al modelo de machine learning durante su entrenamiento.
-    </p>
-  </div>
-</section>
-
-<!-- ======================================================
-     PÁGINA 5 — LA ESQUIZOFRENIA
-     ====================================================== -->
-<section class="pagina pagina-clara" data-pagina="5" aria-label="La esquizofrenia">
-  <div class="contenido">
-    <p class="etiqueta-cap">Capítulo 5</p>
-    <h1 class="titulo-pagina">Un trastorno sin análisis de laboratorio</h1>
-
-    <div class="dos-cols" style="margin-top:0.3rem;">
-      <div class="col-card mala">
-        <span class="col-titulo">Hoy: diagnóstico subjetivo</span>
-        <p class="col-valor">Basado exclusivamente en síntomas observados por un psiquiatra. No existe ninguna prueba biológica que lo confirme.</p>
+    <header class="cab"><p class="cap">Capítulo 1</p><h1 tabindex="-1">Todo empieza en el ADN</h1></header>
+    <div class="bloque">
+      <div class="col">
+        <p>El <i class="t" tabindex="0">ADN</i> guarda las instrucciones para construir y hacer funcionar un organismo. Está dividido en <i class="t" tabindex="0">genes</i>, y cada gen se encarga de una tarea distinta.</p>
+        <p>El cuerpo no lee todos los genes en todas las células ni al mismo tiempo. Existen mecanismos que regulan qué se lee y qué no, y eso es lo que estudia la epigenética.</p>
       </div>
-      <div class="col-card buena">
-        <span class="col-titulo">Lo que buscamos: biomarcador</span>
-        <p class="col-valor">Una medida objetiva, detectable en laboratorio, que permita identificar o descartar el diagnóstico de forma reproducible.</p>
+      <figure class="visual"><div><svg viewBox="0 0 360 110" role="img" aria-label="Doble hélice de ADN con tres genes resaltados"><use href="#adn"/><g fill="#F6AD24"><rect x="80" y="48" width="40" height="17" rx="5"/><rect x="170" y="48" width="40" height="17" rx="5"/><rect x="260" y="48" width="40" height="17" rx="5"/></g></svg><figcaption>Los tramos amarillos representan genes.</figcaption></div></figure>
+    </div>
+  </div>
+</section>
+
+<section class="pagina blanca" aria-label="La epigenética">
+  <div class="contenido">
+    <header class="cab"><p class="cap">Capítulo 2</p><h1 tabindex="-1">Las notas al margen del manual</h1></header>
+    <div class="bloque">
+      <div class="col">
+        <p>La <i class="t" tabindex="0">epigenética</i> estudia cómo se regula la actividad de los genes sin cambiar la secuencia del ADN.</p>
+        <p>Estas marcas pueden cambiar con la edad, el ambiente, el estrés o la alimentación, y algunas se han asociado con enfermedades como la esquizofrenia.</p>
+      </div>
+      <div class="nota">Si el ADN es el texto de un libro, la epigenética son las notas al margen y los resaltadores. El texto sigue igual, pero las marcas cambian qué partes se leen.</div>
+    </div>
+  </div>
+</section>
+
+<section class="pagina clara" aria-label="La metilación">
+  <div class="contenido">
+    <header class="cab"><p class="cap">Capítulo 3</p><h1 tabindex="-1">El sello que apaga genes</h1></header>
+    <div class="bloque">
+      <div class="col">
+        <p>Uno de los mecanismos más estudiados es la <i class="t" tabindex="0">metilación del ADN</i>. Consiste en añadir un grupo metilo (CH₃) en ciertas posiciones del genoma, y con frecuencia el gen de esa zona queda menos activo.</p>
+        <p>Para medirla a gran escala se usa el <i class="t" tabindex="0" data-k="chip 450k">chip Illumina 450k</i>. El modelo no lee el genoma entero: lee una tabla. Cada fila es una persona (<i class="t" tabindex="0">gsm_id</i>) y cada columna, un <i class="t" tabindex="0">sitio CpG</i>.</p>
+        <p class="sello"><svg viewBox="0 0 120 36" aria-hidden="true"><rect x="1" y="6" width="28" height="24" rx="6" fill="none" stroke="currentColor" stroke-width="2"/><text x="15" y="23" text-anchor="middle" font-size="13" fill="currentColor" stroke="none" font-family="system-ui,sans-serif">C</text><path d="M32 18h16" stroke="currentColor" stroke-width="2"/><rect x="50" y="4" width="64" height="28" rx="8" fill="#F6AD24" stroke="none"/><text x="82" y="23" text-anchor="middle" font-size="13" fill="#191919" stroke="none" font-family="system-ui,sans-serif">CH₃</text></svg>Grupo CH₃</p>
+        <div class="nota">Suele asociarse a menor actividad del gen. Aquí la celda es solo el <i class="t" tabindex="0">valor beta</i>, de 0 a 1. No es una ley de «caso más metilado».</div>
+      </div>
+      <figure class="matriz">
+        <div class="matriz-leyenda"><span>Fila · persona</span><span>Columna · cg…</span><span class="escala"><i aria-hidden="true"></i>beta 0 a 1</span></div>
+        <table class="betas">
+          <caption class="sr">Esquema de lectura. Los betas son de ejemplo, no filas del archivo.</caption>
+          <thead><tr><th scope="col">gsm_id</th><th scope="col">cg010…</th><th scope="col">cg448…</th><th scope="col">cg902…</th><th scope="col">cg221…</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">· 1</th><td style="--b:.12">0,12</td><td class="alta" style="--b:.74">0,74</td><td style="--b:.31">0,31</td><td class="alta" style="--b:.58">0,58</td></tr>
+            <tr><th scope="row">· 2</th><td class="alta" style="--b:.66">0,66</td><td style="--b:.22">0,22</td><td class="alta" style="--b:.81">0,81</td><td style="--b:.15">0,15</td></tr>
+            <tr><th scope="row">· 3</th><td style="--b:.40">0,40</td><td class="alta" style="--b:.53">0,53</td><td style="--b:.09">0,09</td><td class="alta" style="--b:.70">0,70</td></tr>
+            <tr><th scope="row">· 4</th><td style="--b:.27">0,27</td><td class="alta" style="--b:.88">0,88</td><td style="--b:.46">0,46</td><td style="--b:.33">0,33</td></tr>
+          </tbody>
+        </table>
+        <figcaption>Esquema, no una fila real. El color sigue al valor beta.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="pagina blanca" aria-label="El fenotipo">
+  <div class="contenido">
+    <header class="cab"><p class="cap">Capítulo 4</p><h1 tabindex="-1">La receta y el plato</h1></header>
+    <div class="bloque">
+      <div class="col">
+        <p>El <i class="t" tabindex="0">fenotipo</i> reúne las características observables de una persona, como su apariencia, su comportamiento o su salud. Resulta de combinar la genética con lo vivido.</p>
+        <p>En este proyecto el dato clave es el diagnóstico clínico: si la persona tiene o no esquizofrenia. Esa etiqueta guía al modelo durante su entrenamiento.</p>
+      </div>
+      <div class="col">
+        <ul class="tarjetas">
+          <li class="tarjeta"><b>Genotipo</b><span>La receta: la información genética.</span></li>
+          <li class="tarjeta"><b>Fenotipo</b><span>El plato: el resultado, tras sumar la vida y el entorno.</span></li>
+        </ul>
+        <div class="nota">Dos cocineros con la misma receta pueden obtener platos distintos.</div>
       </div>
     </div>
-
-    <p class="cuerpo">
-      La <span class="term" tabindex="0" data-term="esquizofrenia" data-def="Trastorno mental severo que afecta la percepción de la realidad, el pensamiento y el comportamiento. Afecta aproximadamente al 1% de la población mundial y es una de las principales causas de discapacidad.">esquizofrenia</span> es un trastorno mental severo que afecta la percepción de la realidad, el pensamiento y el comportamiento. Su diagnóstico hoy es completamente subjetivo: no existe ningún análisis clínico que lo confirme.
-    </p>
-    <p class="cuerpo">
-      La ausencia de <span class="term" tabindex="0" data-term="biomarcadores" data-def="Indicadores biológicos medibles —proteínas, patrones genéticos, niveles de metilación— que permiten identificar una enfermedad de forma objetiva y reproducible.">biomarcadores</span> objetivos es el problema central que motiva esta investigación.
-    </p>
   </div>
 </section>
 
-<!-- ======================================================
-     PÁGINA 6 — FIRMA EPIGENÉTICA
-     ====================================================== -->
-<section class="pagina pagina-blanca" data-pagina="6" aria-label="La firma epigenética">
+<section class="pagina clara" aria-label="La esquizofrenia">
   <div class="contenido">
-    <p class="etiqueta-cap">Capítulo 6</p>
-    <h1 class="titulo-pagina">Una huella en el genoma</h1>
-
-    <div class="ilustracion">
-      <svg width="350" height="105" viewBox="0 0 350 105" fill="none" aria-label="Patrones de metilación distintos entre personas con y sin esquizofrenia">
-        <!-- Grupo control -->
-        <text x="72"  y="13" text-anchor="middle" font-size="9" font-family="system-ui" fill="#1e8449" font-weight="700">Sin esquizofrenia</text>
-        <rect x="6"  y="18" width="132" height="68" rx="7" fill="rgba(30,132,73,0.05)" stroke="#1e8449" stroke-width="1"/>
-        <rect x="15"  y="28" width="8" height="44" rx="3" fill="rgba(30,132,73,0.22)"/>
-        <rect x="27"  y="40" width="8" height="32" rx="3" fill="rgba(30,132,73,0.32)"/>
-        <rect x="39"  y="34" width="8" height="38" rx="3" fill="rgba(30,132,73,0.22)"/>
-        <rect x="51"  y="44" width="8" height="28" rx="3" fill="rgba(30,132,73,0.38)"/>
-        <rect x="63"  y="30" width="8" height="42" rx="3" fill="rgba(30,132,73,0.22)"/>
-        <rect x="75"  y="48" width="8" height="24" rx="3" fill="rgba(30,132,73,0.3)"/>
-        <rect x="87"  y="38" width="8" height="34" rx="3" fill="rgba(30,132,73,0.22)"/>
-        <rect x="99"  y="42" width="8" height="30" rx="3" fill="rgba(30,132,73,0.28)"/>
-        <rect x="111" y="32" width="8" height="40" rx="3" fill="rgba(30,132,73,0.18)"/>
-        <rect x="123" y="46" width="8" height="26" rx="3" fill="rgba(30,132,73,0.32)"/>
-        <!-- Flecha firma -->
-        <path class="linea-firma" d="M140 52 L210 52" stroke="#F6AD24" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-        <text x="175" y="44" text-anchor="middle" font-size="8" font-family="system-ui" fill="#a07000" font-weight="600">firma</text>
-        <!-- Grupo caso -->
-        <text x="281" y="13" text-anchor="middle" font-size="9" font-family="system-ui" fill="#c0392b" font-weight="700">Con esquizofrenia</text>
-        <rect x="213" y="18" width="132" height="68" rx="7" fill="rgba(162,45,45,0.05)" stroke="#c0392b" stroke-width="1"/>
-        <rect x="222" y="28" width="8" height="44" rx="3" fill="rgba(162,45,45,0.22)"/>
-        <rect x="234" y="20" width="8" height="52" rx="3" fill="rgba(162,45,45,0.6)"/>
-        <rect x="246" y="36" width="8" height="36" rx="3" fill="rgba(162,45,45,0.22)"/>
-        <rect x="258" y="18" width="8" height="54" rx="3" fill="rgba(162,45,45,0.65)"/>
-        <rect x="270" y="32" width="8" height="40" rx="3" fill="rgba(162,45,45,0.22)"/>
-        <rect x="282" y="22" width="8" height="50" rx="3" fill="rgba(162,45,45,0.58)"/>
-        <rect x="294" y="36" width="8" height="36" rx="3" fill="rgba(162,45,45,0.22)"/>
-        <rect x="306" y="20" width="8" height="52" rx="3" fill="rgba(162,45,45,0.6)"/>
-        <rect x="318" y="30" width="8" height="42" rx="3" fill="rgba(162,45,45,0.22)"/>
-        <rect x="330" y="24" width="8" height="48" rx="3" fill="rgba(162,45,45,0.55)"/>
-        <!-- Leyenda -->
-        <text x="6"   y="98" font-size="7.5" font-family="system-ui" fill="#1e8449" opacity="0.7">↑ metilación baja en CpGs diferenciales</text>
-        <text x="213" y="98" font-size="7.5" font-family="system-ui" fill="#c0392b" opacity="0.7">↑ metilación elevada en CpGs diferenciales</text>
-      </svg>
-    </div>
-
-    <p class="cuerpo">
-      Cuando se analiza el patrón de metilación en personas con y sin esquizofrenia, se busca identificar una <span class="term" tabindex="0" data-term="firma epigenética" data-def="Conjunto de posiciones del genoma (sitios CpG) con niveles de metilación consistentemente distintos entre dos grupos clínicos. No es un punto único, sino un patrón conjunto que permite clasificar.">firma epigenética</span>: un conjunto de posiciones del genoma con niveles de metilación consistentemente distintos entre ambos grupos.
-    </p>
-
-    <div class="analogia">
-      Es el equivalente biológico de una huella dactilar del trastorno: no un solo rasgo, sino un patrón que en conjunto permite la identificación.
+    <header class="cab"><p class="cap">Capítulo 5</p><h1 tabindex="-1">Un trastorno sin prueba de laboratorio</h1></header>
+    <div class="bloque">
+      <div class="col">
+        <p>La <i class="t" tabindex="0">esquizofrenia</i> es un trastorno mental grave que afecta la percepción de la realidad, el pensamiento y el comportamiento. Afecta a cerca del 1 % de la población mundial.</p>
+        <p>La falta de <i class="t" tabindex="0">biomarcadores</i> objetivos es el problema que motiva esta investigación.</p>
+      </div>
+      <ul class="tarjetas">
+        <li class="tarjeta mala"><b>Hoy</b><span>El diagnóstico se basa en criterios clínicos y en lo que observa un psiquiatra. No existe una prueba biológica que lo confirme.</span></li>
+        <li class="tarjeta buena"><b>Lo que se busca</b><span>Una medida objetiva, detectable en laboratorio, que ayude a identificar el trastorno de forma reproducible.</span></li>
+      </ul>
     </div>
   </div>
 </section>
 
-<!-- ======================================================
-     PÁGINA 7 — SANGRE PERIFÉRICA
-     ====================================================== -->
-<section class="pagina pagina-clara" data-pagina="7" aria-label="La sangre periférica">
+<section class="pagina blanca" aria-label="La firma epigenética">
   <div class="contenido">
-    <p class="etiqueta-cap">Capítulo 7</p>
-    <h1 class="titulo-pagina">Estudiar el cerebro sin abrirlo</h1>
-
-    <div class="ilustracion">
-      <svg width="280" height="95" viewBox="0 0 280 95" fill="none" aria-label="Comparación entre tejido cerebral inaccesible y sangre periférica como alternativa no invasiva">
-        <!-- Cerebro -->
-        <ellipse cx="62" cy="52" rx="42" ry="33" fill="rgba(16,73,172,0.07)" stroke="#1049ac" stroke-width="1.5"/>
-        <path d="M38 44 Q52 28 68 40 Q80 30 90 46" stroke="#1049ac" stroke-width="1.5" fill="none" opacity="0.45"/>
-        <path d="M34 56 Q48 70 64 59 Q76 70 88 57" stroke="#1049ac" stroke-width="1.5" fill="none" opacity="0.4"/>
-        <path d="M56 30 Q62 22 68 30" stroke="#1049ac" stroke-width="1.2" fill="none" opacity="0.3"/>
-        <rect x="44" y="10" width="36" height="14" rx="4" fill="rgba(162,45,45,0.12)" stroke="#c0392b" stroke-width="0.8"/>
-        <text x="62" y="20" text-anchor="middle" font-size="7.5" font-family="system-ui" fill="#922b21" font-weight="600">inaccesible</text>
-        <text x="62" y="90" text-anchor="middle" font-size="8" font-family="system-ui" fill="#1049ac" opacity="0.5">tejido cerebral</text>
-        <!-- Flecha alternativa -->
-        <path d="M106 52 L162 52" stroke="#F6AD24" stroke-width="2.2" fill="none"/>
-        <polygon points="162,47 172,52 162,57" fill="#F6AD24"/>
-        <text x="139" y="44" text-anchor="middle" font-size="8" font-family="system-ui" fill="#a07000" font-weight="600">alternativa</text>
-        <!-- Gota de sangre -->
-        <path d="M210 20 Q228 38 228 56 Q228 74 210 78 Q192 74 192 56 Q192 38 210 20Z" fill="rgba(162,45,45,0.12)" stroke="#c0392b" stroke-width="1.5"/>
-        <circle cx="210" cy="52" r="10" fill="rgba(162,45,45,0.2)"/>
-        <rect x="190" y="6" width="40" height="14" rx="4" fill="rgba(30,132,73,0.12)" stroke="#1e8449" stroke-width="0.8"/>
-        <text x="210" y="16" text-anchor="middle" font-size="7.5" font-family="system-ui" fill="#1a5e37" font-weight="600">no invasiva</text>
-        <text x="210" y="90" text-anchor="middle" font-size="8" font-family="system-ui" fill="#1049ac" opacity="0.5">sangre periférica</text>
-      </svg>
-    </div>
-
-    <p class="cuerpo">
-      La forma ideal sería estudiar <span class="term" tabindex="0" data-term="tejido cerebral" data-def="Tejido nervioso del cerebro donde se origina la esquizofrenia. Solo es accesible post mortem, lo que limita enormemente la investigación en personas vivas.">tejido cerebral</span>. El problema es que ese tejido solo es accesible post mortem. La <span class="term" tabindex="0" data-term="sangre periférica" data-def="Sangre que circula por venas y arterias fuera del cerebro. Accesible mediante extracción común, comparable a cualquier análisis de rutina médica.">sangre periférica</span> ofrece una alternativa no invasiva que permite análisis en personas vivas.
-    </p>
-
-    <div class="analogia">
-      Como leer el clima por la ventana en lugar de ir a la estación meteorológica — no es perfecta, pero es accesible y suficientemente informativa.
+    <header class="cab"><p class="cap">Capítulo 6</p><h1 tabindex="-1">Una huella en el genoma</h1></header>
+    <div class="bloque">
+      <div class="col">
+        <p>Al comparar la metilación de personas con y sin esquizofrenia se busca una <i class="t" tabindex="0">firma epigenética</i>: un conjunto de posiciones del genoma cuyo nivel de metilación suele ser distinto entre los dos grupos.</p>
+        <div class="nota">Funciona como una huella dactilar. Ninguna marca aislada identifica el trastorno, pero el patrón completo puede ayudar a distinguirlo. La etiqueta SCZ o CNT es el diagnóstico, no el color de la celda.</div>
+      </div>
+      <figure class="matriz">
+        <div class="matriz-leyenda"><span>Dos columnas en ámbar: el patrón que se compara</span><span class="escala"><i aria-hidden="true"></i>beta, mezclados a propósito</span></div>
+        <table class="betas">
+          <caption class="sr">Esquema. Los betas no siguen una dirección de más metilación en los casos.</caption>
+          <thead><tr><th scope="col">gsm_id</th><th scope="col">cg010…</th><th class="panel" scope="col">cg448…</th><th scope="col">cg902…</th><th class="panel" scope="col">cg221…</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">· 1 <em class="eti">CNT</em></th><td class="alta" style="--b:.71">0,71</td><td class="panel" style="--b:.18">0,18</td><td class="alta" style="--b:.62">0,62</td><td class="panel" style="--b:.44">0,44</td></tr>
+            <tr><th scope="row">· 2 <em class="eti scz">SCZ</em></th><td style="--b:.22">0,22</td><td class="alta panel" style="--b:.80">0,80</td><td style="--b:.15">0,15</td><td class="panel" style="--b:.36">0,36</td></tr>
+            <tr><th scope="row">· 3 <em class="eti">CNT</em></th><td class="alta" style="--b:.48">0,48</td><td class="panel" style="--b:.29">0,29</td><td class="alta" style="--b:.77">0,77</td><td class="alta panel" style="--b:.61">0,61</td></tr>
+            <tr><th scope="row">· 4 <em class="eti scz">SCZ</em></th><td class="alta" style="--b:.83">0,83</td><td class="panel" style="--b:.41">0,41</td><td style="--b:.24">0,24</td><td class="panel" style="--b:.19">0,19</td></tr>
+          </tbody>
+        </table>
+        <figcaption>Esquema de lectura. El color es el valor beta; la etiqueta es solo el diagnóstico.</figcaption>
+      </figure>
     </div>
   </div>
 </section>
 
-<!-- ======================================================
-     PÁGINA 8 — METAANÁLISIS
-     ====================================================== -->
-<section class="pagina pagina-blanca" data-pagina="8" aria-label="El metaanálisis">
+<section class="pagina clara" aria-label="La sangre periférica">
   <div class="contenido">
-    <p class="etiqueta-cap">Capítulo 8</p>
-    <h1 class="titulo-pagina">Más datos, más certeza</h1>
-
-    <div class="ilustracion">
-      <svg width="340" height="88" viewBox="0 0 340 88" fill="none" aria-label="Seis estudios independientes que convergen en un metaanálisis armonizado">
-        <!-- 6 estudios -->
-        <rect x="4"   y="8"  width="44" height="20" rx="4" fill="#e4ecf8" stroke="#1049ac" stroke-width="1"/>
-        <text x="26"  y="21" text-anchor="middle" font-size="7.5" font-family="system-ui" fill="#1049ac" font-weight="600">GSE116378</text>
-        <rect x="4"   y="36" width="44" height="20" rx="4" fill="#e4ecf8" stroke="#1049ac" stroke-width="1"/>
-        <text x="26"  y="49" text-anchor="middle" font-size="7.5" font-family="system-ui" fill="#1049ac" font-weight="600">GSE116379</text>
-        <rect x="54"  y="8"  width="44" height="20" rx="4" fill="#e4ecf8" stroke="#1049ac" stroke-width="1"/>
-        <text x="76"  y="21" text-anchor="middle" font-size="7.5" font-family="system-ui" fill="#1049ac" font-weight="600">GSE80417</text>
-        <rect x="54"  y="36" width="44" height="20" rx="4" fill="#e4ecf8" stroke="#1049ac" stroke-width="1"/>
-        <text x="76"  y="49" text-anchor="middle" font-size="7.5" font-family="system-ui" fill="#1049ac" font-weight="600">GSE84727</text>
-        <rect x="104" y="8"  width="44" height="20" rx="4" fill="#e4ecf8" stroke="#1049ac" stroke-width="1"/>
-        <text x="126" y="21" text-anchor="middle" font-size="7.5" font-family="system-ui" fill="#1049ac" font-weight="600">GSE152027</text>
-        <rect x="104" y="36" width="44" height="20" rx="4" fill="#e4ecf8" stroke="#1049ac" stroke-width="1"/>
-        <text x="126" y="49" text-anchor="middle" font-size="7.5" font-family="system-ui" fill="#1049ac" font-weight="600">GSE147221</text>
-        <!-- Flechas convergentes -->
-        <path d="M48 18  Q158 18  178 42" stroke="#F6AD24" stroke-width="1.2" fill="none" opacity="0.8"/>
-        <path d="M48 46  Q148 46  178 44" stroke="#F6AD24" stroke-width="1.2" fill="none" opacity="0.8"/>
-        <path d="M98 18  Q165 18  178 42" stroke="#F6AD24" stroke-width="1.2" fill="none" opacity="0.6"/>
-        <path d="M98 46  Q160 46  178 44" stroke="#F6AD24" stroke-width="1.2" fill="none" opacity="0.6"/>
-        <path d="M148 18 Q172 18  178 42" stroke="#F6AD24" stroke-width="1.2" fill="none" opacity="0.4"/>
-        <path d="M148 46 Q168 46  178 44" stroke="#F6AD24" stroke-width="1.2" fill="none" opacity="0.4"/>
-        <!-- Caja armonización -->
-        <rect x="178" y="28" width="66" height="30" rx="5" fill="rgba(246,173,36,0.12)" stroke="#F6AD24" stroke-width="1.2"/>
-        <text x="211" y="41" text-anchor="middle" font-size="7.5" font-family="system-ui" fill="#a07000" font-weight="700">armonización</text>
-        <text x="211" y="52" text-anchor="middle" font-size="6.5" font-family="system-ui" fill="#a07000">corrección batch</text>
-        <!-- Flecha resultado -->
-        <path d="M244 43 L272 43" stroke="#1049ac" stroke-width="1.8" fill="none"/>
-        <polygon points="272,38 282,43 272,48" fill="#1049ac"/>
-        <!-- Resultado metaanálisis -->
-        <rect x="282" y="20" width="54" height="46" rx="7" fill="#1049ac"/>
-        <text x="309" y="38" text-anchor="middle" font-size="8" font-family="system-ui" fill="white" font-weight="700">meta-</text>
-        <text x="309" y="50" text-anchor="middle" font-size="8" font-family="system-ui" fill="white" font-weight="700">análisis</text>
-        <text x="309" y="60" text-anchor="middle" font-size="6.5" font-family="system-ui" fill="rgba(255,255,255,0.6)">n &gt; 1.000</text>
-        <!-- Leyenda GEO -->
-        <text x="4" y="78" font-size="7.5" font-family="system-ui" fill="#1049ac" opacity="0.5">Fuente: NCBI Gene Expression Omnibus (GEO) · Illumina HM450</text>
-      </svg>
+    <header class="cab"><p class="cap">Capítulo 7</p><h1 tabindex="-1">Estudiar el cerebro sin abrirlo</h1></header>
+    <div class="bloque">
+      <div class="col">
+        <p>Lo ideal sería analizar tejido cerebral, pero en personas vivas no es posible. La <i class="t" tabindex="0">sangre periférica</i> se obtiene con una extracción común y permite estudiar a personas en vida.</p>
+        <p>Además, algunas marcas de metilación de la sangre guardan relación con las del cerebro.</p>
+      </div>
+      <ul class="tarjetas">
+        <li class="tarjeta mala"><b>Tejido cerebral</b><span>Solo se puede estudiar después del fallecimiento.</span></li>
+        <li class="tarjeta buena"><b>Sangre periférica</b><span>Accesible, poco invasiva y comparable a un examen de rutina.</span></li>
+      </ul>
     </div>
-
-    <p class="cuerpo">
-      Para aprovechar el material disponible en repositorios como <span class="term" tabindex="0" data-term="NCBI GEO" data-def="Gene Expression Omnibus. Base de datos pública del NCBI (EE. UU.) que almacena datos genómicos y epigenómicos de miles de estudios de investigación de todo el mundo.">NCBI GEO</span>, se trabaja con un <span class="term" tabindex="0" data-term="metaanálisis IPD" data-def="Metaanálisis con datos individuales por participante (Individual Participant Data). En lugar de combinar solo conclusiones publicadas, se trabaja con los datos crudos de cada persona en cada estudio, lo que da mayor poder estadístico.">metaanálisis con datos por participante</span>.
-    </p>
-    <p class="cuerpo">
-      Antes de cualquier análisis, los datos deben <span class="term" tabindex="0" data-term="armonizarse" data-def="Corregir diferencias técnicas introducidas por distintos laboratorios, fechas y condiciones experimentales (efectos batch), para que los datos de estudios diferentes sean comparables entre sí.">armonizarse</span>: corregir las diferencias técnicas entre laboratorios para que no introduzcan ruido. Es como convertir todas las medidas a la misma unidad antes de comparar.
-    </p>
   </div>
 </section>
 
-<!-- ======================================================
-     PÁGINA 9 — MODELO DE ML
-     ====================================================== -->
-<section class="pagina pagina-clara" data-pagina="9" aria-label="El modelo de machine learning">
+<section class="pagina blanca" aria-label="Los datos">
   <div class="contenido">
-    <p class="etiqueta-cap">Capítulo 9</p>
-    <h1 class="titulo-pagina">Aprender a reconocer un patrón</h1>
-
-    <div class="ilustracion">
-      <svg width="340" height="88" viewBox="0 0 340 88" fill="none" aria-label="Ciclo de entrenamiento y validación del modelo de machine learning">
-        <!-- Datos de entrada -->
-        <rect x="4"  y="12" width="60" height="16" rx="3" fill="rgba(162,45,45,0.14)" stroke="#c0392b" stroke-width="0.8"/>
-        <text x="34" y="23" text-anchor="middle" font-size="7.5" font-family="system-ui" fill="#922b21" font-weight="600">caso SCZ</text>
-        <rect x="4"  y="34" width="60" height="16" rx="3" fill="rgba(30,132,73,0.14)" stroke="#1e8449" stroke-width="0.8"/>
-        <text x="34" y="45" text-anchor="middle" font-size="7.5" font-family="system-ui" fill="#1a5e37" font-weight="600">control</text>
-        <rect x="4"  y="56" width="60" height="16" rx="3" fill="rgba(162,45,45,0.14)" stroke="#c0392b" stroke-width="0.8"/>
-        <text x="34" y="67" text-anchor="middle" font-size="7.5" font-family="system-ui" fill="#922b21" font-weight="600">caso SCZ</text>
-        <!-- Flechas entrada -->
-        <line x1="64" y1="20" x2="108" y2="40" stroke="#1049ac" stroke-width="1" opacity="0.4"/>
-        <line x1="64" y1="42" x2="108" y2="43" stroke="#1049ac" stroke-width="1" opacity="0.4"/>
-        <line x1="64" y1="64" x2="108" y2="46" stroke="#1049ac" stroke-width="1" opacity="0.4"/>
-        <!-- Modelo -->
-        <rect x="108" y="24" width="80" height="36" rx="8" fill="#1049ac"/>
-        <text x="148" y="38" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="white" font-weight="700">modelo</text>
-        <text x="148" y="52" text-anchor="middle" font-size="7" font-family="system-ui" fill="rgba(255,255,255,0.65)">aprendizaje supervisado</text>
-        <!-- Flecha salida -->
-        <line x1="188" y1="42" x2="218" y2="42" stroke="#F6AD24" stroke-width="1.8"/>
-        <polygon points="218,37 228,42 218,47" fill="#F6AD24"/>
-        <!-- Métricas -->
-        <rect x="228" y="12" width="72" height="20" rx="4" fill="rgba(30,132,73,0.1)" stroke="#1e8449" stroke-width="0.8"/>
-        <text x="264" y="25" text-anchor="middle" font-size="8" font-family="system-ui" fill="#1a5e37" font-weight="600">AUC-ROC</text>
-        <rect x="228" y="37" width="72" height="20" rx="4" fill="rgba(30,132,73,0.1)" stroke="#1e8449" stroke-width="0.8"/>
-        <text x="264" y="50" text-anchor="middle" font-size="8" font-family="system-ui" fill="#1a5e37" font-weight="600">AUC-PR</text>
-        <rect x="228" y="62" width="72" height="16" rx="4" fill="rgba(246,173,36,0.12)" stroke="#F6AD24" stroke-width="0.8"/>
-        <text x="264" y="73" text-anchor="middle" font-size="7.5" font-family="system-ui" fill="#a07000" font-weight="600">validación cruzada</text>
-        <!-- Leyenda sklearn -->
-        <text x="4" y="85" font-size="7.5" font-family="system-ui" fill="#1049ac" opacity="0.5">Implementado con scikit-learn · Python</text>
-      </svg>
-    </div>
-
-    <p class="cuerpo">
-      Un <span class="term" tabindex="0" data-term="modelo supervisado" data-def="Algoritmo que aprende a clasificar datos a partir de ejemplos etiquetados. En este caso: perfiles de metilación de personas con diagnóstico conocido (caso o control).">modelo de aprendizaje automático supervisado</span> aprende a clasificar datos a partir de ejemplos con respuesta conocida. Se le muestran perfiles de metilación de personas con y sin esquizofrenia, y aprende los patrones que las distinguen.
-    </p>
-    <p class="cuerpo">
-      Para garantizar que el modelo realmente generalice y no solo memorice los datos, se evalúa con métricas como <span class="term" tabindex="0" data-term="AUC-ROC" data-def="Área bajo la curva Receiver Operating Characteristic. Mide qué tan bien el modelo distingue entre positivos y negativos. 1.0 = perfecto, 0.5 = azar.">AUC-ROC</span> y <span class="term" tabindex="0" data-term="AUC-PR" data-def="Área bajo la curva Precisión-Recall. Especialmente útil cuando las clases están desbalanceadas, como suele ocurrir en datos clínicos.">AUC-PR</span>, mediante validación cruzada.
-    </p>
-
-    <div class="analogia">
-      Como entrenar a alguien para reconocer frutas mostrándole miles de ejemplos: aprende a distinguirlas sola, sin que nadie le explique la regla explícitamente.
+    <header class="cab"><p class="cap">Capítulo 8</p><h1 tabindex="-1">Cinco estudios, un archivo</h1></header>
+    <div class="bloque">
+      <p class="ancho">Vienen de <i class="t" tabindex="0">NCBI GEO</i>, medidos en sangre con el chip 450k. Los conteos son los de la entrega final, train más <i class="t" tabindex="0">holdout</i>, no los de los artículos. Cada laboratorio mide a su manera: el archivo se <i class="t" tabindex="0">armoniza</i> antes de unirse.</p>
+      <ul class="tarjetas cohortes ancho" aria-label="Cohortes del metaanálisis final">
+        <li class="tarjeta"><b>GSE116378</b><span class="lugar">DUTCHSCZ · sangre · 2018</span><span class="conteo">15 SCZ / 49 CNT</span></li>
+        <li class="tarjeta"><b>GSE116379</b><span class="lugar">DUTCHSCZ · hambruna prenatal · 2018</span><span class="conteo">74 SCZ / 79 CNT</span></li>
+        <li class="tarjeta"><b>GSE80417</b><span class="lugar">UCL · Londres · 2016</span><span class="conteo">322 SCZ / 353 CNT</span></li>
+        <li class="tarjeta referencia"><b>GSE84727</b><span class="lugar">Aberdeen · Escocia · 2016</span><span class="conteo">433 SCZ / 414 CNT</span><span class="marca">Referencia de <i class="t" tabindex="0">regRCPqn</i></span></li>
+        <li class="tarjeta"><b>GSE152027</b><span class="lugar">IoPPN · sin primer episodio · 2021</span><span class="conteo">288 SCZ / 202 CNT</span></li>
+      </ul>
+      <p class="excluida ancho"><b>GSE147221.</b> Se evaluó al inicio y quedó fuera del metaanálisis. No entra en el total.</p>
+      <p class="total-linea ancho"><b>2.229</b> etiquetadas · 1.132 SCZ / 1.097 CNT</p>
+      <div class="reparto ancho" style="--tr:1782;--ho:447" role="img" aria-label="Train: 1.782 personas, 905 con esquizofrenia y 877 controles. Holdout: 447, 227 y 220."><i></i><i></i></div>
+      <div class="leyenda ancho"><span class="sw">Train 1.782 · 905 SCZ / 877 CNT</span><span class="sw ho">Holdout 447 · 227 SCZ / 220 CNT</span></div>
     </div>
   </div>
 </section>
 
-<!-- ======================================================
-     PÁGINA 10 — PLATAFORMA WEB
-     ====================================================== -->
-<section class="pagina pagina-blanca" data-pagina="10" aria-label="La plataforma web">
+<section class="pagina clara" aria-label="Dos oficios">
   <div class="contenido">
-    <p class="etiqueta-cap">Capítulo 10</p>
-    <h1 class="titulo-pagina">De la fórmula a la calculadora</h1>
-
-    <div class="ilustracion">
-      <svg width="320" height="90" viewBox="0 0 320 90" fill="none" aria-label="Flujo desde el modelo técnico hasta el investigador a través de la plataforma web">
-        <!-- Script -->
-        <rect x="4"  y="18" width="62" height="52" rx="5" fill="#e4ecf8" stroke="#1049ac" stroke-width="1.3"/>
-        <text x="35" y="34" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="#1049ac" font-weight="700">modelo.py</text>
-        <line x1="14" y1="42" x2="56" y2="42" stroke="#1049ac" stroke-width="1" opacity="0.3"/>
-        <line x1="14" y1="51" x2="44" y2="51" stroke="#1049ac" stroke-width="1" opacity="0.3"/>
-        <line x1="14" y1="60" x2="56" y2="60" stroke="#1049ac" stroke-width="1" opacity="0.3"/>
-        <rect x="4" y="70" width="62" height="12" rx="2" fill="rgba(162,45,45,0.1)"/>
-        <text x="35" y="79" text-anchor="middle" font-size="7" font-family="system-ui" fill="#922b21">solo programadores</text>
-        <!-- Flecha -->
-        <path d="M66 44 L100 44" stroke="#F6AD24" stroke-width="1.8" fill="none"/>
-        <polygon points="100,39 110,44 100,49" fill="#F6AD24"/>
-        <!-- Plataforma -->
-        <rect x="110" y="12" width="90" height="60" rx="7" fill="#1049ac"/>
-        <!-- Barra navegador -->
-        <rect x="116" y="18" width="78" height="9"  rx="2" fill="rgba(255,255,255,0.12)"/>
-        <circle cx="121" cy="22.5" r="2.5" fill="rgba(255,255,255,0.4)"/>
-        <circle cx="128" cy="22.5" r="2.5" fill="rgba(255,255,255,0.4)"/>
-        <circle cx="135" cy="22.5" r="2.5" fill="rgba(255,255,255,0.4)"/>
-        <!-- Contenido mockup -->
-        <rect x="116" y="30" width="78" height="34" rx="2" fill="rgba(255,255,255,0.06)"/>
-        <rect x="120" y="34" width="70" height="7"  rx="2" fill="rgba(255,255,255,0.18)"/>
-        <rect x="120" y="45" width="40" height="7"  rx="2" fill="rgba(255,255,255,0.1)"/>
-        <rect x="120" y="55" width="30" height="8"  rx="12" fill="rgba(246,173,36,0.85)"/>
-        <text x="135" y="62" text-anchor="middle" font-size="6" font-family="system-ui" fill="#191919" font-weight="700">ejecutar</text>
-        <text x="155" y="84" text-anchor="middle" font-size="8" font-family="system-ui" fill="#1049ac" font-weight="600">plataforma web</text>
-        <!-- Flecha -->
-        <path d="M200 42 L232 42" stroke="#F6AD24" stroke-width="1.8" fill="none"/>
-        <polygon points="232,37 242,42 232,47" fill="#F6AD24"/>
-        <!-- Investigador -->
-        <circle cx="262" cy="30" r="14" fill="rgba(30,132,73,0.1)" stroke="#1e8449" stroke-width="1.2"/>
-        <text x="262" y="35" text-anchor="middle" font-size="16">👤</text>
-        <rect x="240" y="50" width="44" height="22" rx="5" fill="rgba(30,132,73,0.1)" stroke="#1e8449" stroke-width="0.8"/>
-        <text x="262" y="62" text-anchor="middle" font-size="7.5" font-family="system-ui" fill="#1a5e37" font-weight="600">cualquier</text>
-        <text x="262" y="72" text-anchor="middle" font-size="7.5" font-family="system-ui" fill="#1a5e37">investigador</text>
-      </svg>
+    <header class="cab"><p class="cap">Capítulo 8 · el archivo</p><h1 tabindex="-1">Quién hace cada paso</h1></header>
+    <p>La página no fabrica la matriz. Hay un carril del laboratorio, en R, y el de este trabajo, en Python.</p>
+    <div class="carriles">
+      <article class="carril">
+        <header><b>Laboratorio</b><span>Hernán Hernández · R</span></header>
+        <ol>
+          <li><i class="t" tabindex="0">dasen</i> y <i class="t" tabindex="0">BMIQ</i></li>
+          <li><i class="t" tabindex="0">EpiDISH</i> y <i class="t" tabindex="0">EpiSmokEr</i><small>antes de mezclar</small></li>
+          <li><i class="t" tabindex="0">regRCPqn</i><small>referencia GSE84727</small></li>
+          <li><i class="t" tabindex="0">methylclock</i><small>después</small></li>
+        </ol>
+        <p class="pie"><i class="t" tabindex="0">ComBat</i> y la partición 80/20 son un paso posterior del laboratorio, no de la web.</p>
+      </article>
+      <article class="carril est">
+        <header><b>Estudiante</b><span>Python</span></header>
+        <ol>
+          <li>Alinear por <i class="t" tabindex="0">gsm_id</i></li>
+          <li>Filtro de varianza</li>
+          <li>Cinco clasificadores</li>
+          <li><i class="t" tabindex="0">CV anidada</i></li>
+          <li><i class="t" tabindex="0" data-k="holdout">Holdout</i></li>
+          <li>Export</li>
+          <li>Empalme en PERASArc</li>
+        </ol>
+      </article>
     </div>
-
-    <p class="cuerpo">
-      Sin una plataforma, el modelo existe como un <span class="term" tabindex="0" data-term="script" data-def="Archivo de código ejecutable desde una terminal de computadora. Requiere conocimientos de programación para ser usado correctamente.">script</span> en una computadora, accesible solo para quienes saben programar. Con la <span class="term" tabindex="0" data-term="plataforma web pública" data-def="Aplicación accesible desde un navegador web sin necesidad de instalación. En este proyecto se construye sobre la arquitectura preexistente PERASArc (Django + Vue.js).">plataforma web de acceso público</span>, cualquier investigador puede cargar sus datos, ejecutar el modelo y obtener resultados interpretables.
-    </p>
-
-    <div class="analogia">
-      La fórmula y la calculadora hacen lo mismo. Pero la calculadora la puede usar cualquiera.
-    </div>
+    <div class="nota">Es como pasar todas las medidas a la misma unidad antes de compararlas.</div>
   </div>
 </section>
 
-<!-- ======================================================
-     PÁGINA 11 — HILO NARRATIVO (cómo todo conecta)
-     ====================================================== -->
-<section class="pagina pagina-clara" data-pagina="11" aria-label="Cómo todo conecta">
+<section class="pagina blanca" aria-label="El modelo">
   <div class="contenido">
-    <p class="etiqueta-cap">Capítulo 11</p>
-    <h1 class="titulo-pagina">Cómo todo conecta</h1>
+    <header class="cab"><p class="cap">Capítulo 9</p><h1 tabindex="-1">De medio millón de sondas al panel</h1></header>
+    <p>Un <i class="t" tabindex="0">modelo supervisado</i> aprende con ejemplos cuya respuesta ya se conoce. Antes de nombrar algoritmos, el archivo se reduce así.</p>
+    <ol class="embudo" aria-label="Recorte de columnas hasta el panel que usa la web">
+      <li style="--w:100%"><b>~450.000</b><span>sondas del chip</span></li>
+      <li style="--w:78%"><b>227.962</b><span>sitios en el encabezado FINAL, más gsm_id</span></li>
+      <li style="--w:74%"><b>227.323</b><span>tras excluir 639 <i class="t" tabindex="0">sondas ch.</i></span></li>
+      <li style="--w:58%"><b>66.441</b><span>filtro de varianza, umbral 0,001</span></li>
+      <li class="fijo" style="--w:100%"><b><i class="t" tabindex="0" data-k="panel congelado">Panel congelado</i></b><span>Dentro de cada pliegue, k. Moda de la CV anidada FINAL: KNN 881, Random Forest 558, SVM 137. La lista queda en panel_cpg_final.txt. La web no vuelve a filtrar.</span></li>
+    </ol>
+    <p class="nota">El ancho es una guía; los números son los conteos reales.</p>
+  </div>
+</section>
 
-    <!-- Diagrama ancho: en pantallas estrechas se desplaza horizontalmente dentro de la página -->
-    <div class="ilustracion diagrama-scroll-x">
-      <svg width="680" height="220" viewBox="0 0 680 220" fill="none" xmlns="http://www.w3.org/2000/svg"
-           aria-label="Cadena narrativa del proyecto: del problema clínico a la solución tecnológica">
-        <!-- ── NODO 1: Problema ── -->
-        <rect x="2" y="70" width="108" height="80" rx="10" fill="#fef5f5" stroke="#c0392b" stroke-width="1.5"/>
-        <text x="56" y="96" text-anchor="middle" font-size="9" font-family="system-ui" fill="#922b21" font-weight="700" letter-spacing="0.06em">PROBLEMA</text>
-        <text x="56" y="112" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="#922b21">Diagnóstico</text>
-        <text x="56" y="124" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="#922b21">subjetivo de</text>
-        <text x="56" y="136" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="#922b21">esquizofrenia</text>
+<section class="pagina clara" aria-label="Los tres algoritmos">
+  <div class="contenido">
+    <header class="cab"><p class="cap">Capítulo 9 · la página</p><h1 tabindex="-1">Tres algoritmos, de cinco</h1></header>
+    <p>Se compararon cinco clasificadores. KNN, SVM lineal y Random Forest pasan a la plataforma. Regresión logística y Naive Bayes se midieron y no están en la interfaz.</p>
+    <ul class="tarjetas">
+      <li class="tarjeta"><b>KNN</b><span>Compara cada muestra con las más parecidas.</span></li>
+      <li class="tarjeta"><b>SVM lineal</b><span>Traza una frontera recta entre los dos grupos. La probabilidad sale de una calibración <i class="t" tabindex="0">Platt</i>.</span></li>
+      <li class="tarjeta"><b>Random Forest</b><span>Combina muchos árboles de decisión que votan.</span></li>
+    </ul>
+  </div>
+</section>
 
-        <!-- Flecha 1→2 -->
-        <path d="M110 110 L138 110" stroke="#1049ac" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-        <polygon points="138,105 148,110 138,115" fill="#1049ac"/>
-        <text x="129" y="103" text-anchor="middle" font-size="7.5" font-family="system-ui" fill="#1049ac" opacity="0.7">busca</text>
-        <text x="129" y="113" text-anchor="middle" font-size="7.5" font-family="system-ui" fill="#1049ac" opacity="0.7">biomarcador</text>
+<section class="pagina blanca" aria-label="Tres mediciones">
+  <div class="contenido">
+    <header class="cab"><p class="cap">Capítulo 9 · la medida</p><h1 tabindex="-1">Tres mediciones distintas</h1></header>
+    <p>No es una sola «validación». Cada caja responde una pregunta diferente. El desempeño se lee con <i class="t" tabindex="0">AUC-ROC</i> y <i class="t" tabindex="0">F1</i>.</p>
+    <ul class="tarjetas">
+      <li class="tarjeta"><b><i class="t" tabindex="0">CV anidada</i></b><span>10 pliegues externos estratificados miden. Un anillo interno elige k y los hiperparámetros. Train de 1.782 personas de los mismos estudios, mezcladas.</span></li>
+      <li class="tarjeta"><b><i class="t" tabindex="0" data-k="holdout">Holdout</i></b><span>447 personas (227 SCZ / 220 CNT), apartado 20 % desde el laboratorio. Se midió una vez y no eligió al ganador. Mezcla los mismos cinco estudios: no es un laboratorio nuevo.</span></li>
+      <li class="tarjeta aviso"><b><i class="t" tabindex="0">LOGO</i></b><span>Experimento aparte. Cada test es un GSE entero no visto. Ahí el AUC cae cerca del azar.</span></li>
+    </ul>
+  </div>
+</section>
 
-        <!-- ── NODO 2: Epigenética ── -->
-        <rect x="148" y="70" width="108" height="80" rx="10" fill="#f0f4fc" stroke="#1049ac" stroke-width="1.5"/>
-        <text x="202" y="96" text-anchor="middle" font-size="9" font-family="system-ui" fill="#1049ac" font-weight="700" letter-spacing="0.06em">ÁREA</text>
-        <text x="202" y="112" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="#1049ac">Epigenética:</text>
-        <text x="202" y="124" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="#1049ac">marcas que</text>
-        <text x="202" y="136" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="#1049ac">regulan genes</text>
-
-        <!-- Flecha 2→3 -->
-        <path d="M256 110 L284 110" stroke="#1049ac" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-        <polygon points="284,105 294,110 284,115" fill="#1049ac"/>
-        <text x="275" y="103" text-anchor="middle" font-size="7.5" font-family="system-ui" fill="#1049ac" opacity="0.7">mecanismo</text>
-        <text x="275" y="113" text-anchor="middle" font-size="7.5" font-family="system-ui" fill="#1049ac" opacity="0.7">clave</text>
-
-        <!-- ── NODO 3: Metilación ── -->
-        <rect x="294" y="70" width="108" height="80" rx="10" fill="#fffbf0" stroke="#F6AD24" stroke-width="1.5"/>
-        <text x="348" y="96" text-anchor="middle" font-size="9" font-family="system-ui" fill="#a07000" font-weight="700" letter-spacing="0.06em">MECANISMO</text>
-        <text x="348" y="112" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="#a07000">Metilación</text>
-        <text x="348" y="124" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="#a07000">del ADN en</text>
-        <text x="348" y="136" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="#a07000">sangre periférica</text>
-
-        <!-- Flecha 3→4 -->
-        <path d="M402 110 L430 110" stroke="#1049ac" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-        <polygon points="430,105 440,110 430,115" fill="#1049ac"/>
-        <text x="421" y="103" text-anchor="middle" font-size="7.5" font-family="system-ui" fill="#1049ac" opacity="0.7">datos</text>
-        <text x="421" y="113" text-anchor="middle" font-size="7.5" font-family="system-ui" fill="#1049ac" opacity="0.7">públicos</text>
-
-        <!-- ── NODO 4: ML ── -->
-        <rect x="440" y="70" width="108" height="80" rx="10" fill="#f0f4fc" stroke="#1049ac" stroke-width="1.5"/>
-        <text x="494" y="96" text-anchor="middle" font-size="9" font-family="system-ui" fill="#1049ac" font-weight="700" letter-spacing="0.06em">ANÁLISIS</text>
-        <text x="494" y="112" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="#1049ac">Modelo ML</text>
-        <text x="494" y="124" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="#1049ac">identifica</text>
-        <text x="494" y="136" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="#1049ac">patrones</text>
-
-        <!-- Flecha 4→5 -->
-        <path d="M548 110 L576 110" stroke="#1049ac" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-        <polygon points="576,105 586,110 576,115" fill="#1049ac"/>
-        <text x="567" y="103" text-anchor="middle" font-size="7.5" font-family="system-ui" fill="#1049ac" opacity="0.7">acceso</text>
-        <text x="567" y="113" text-anchor="middle" font-size="7.5" font-family="system-ui" fill="#1049ac" opacity="0.7">abierto</text>
-
-        <!-- ── NODO 5: Plataforma ── -->
-        <rect x="586" y="70" width="90" height="80" rx="10" fill="#f0faf4" stroke="#1e8449" stroke-width="1.5"/>
-        <text x="631" y="96" text-anchor="middle" font-size="9" font-family="system-ui" fill="#1a5e37" font-weight="700" letter-spacing="0.06em">SOLUCIÓN</text>
-        <text x="631" y="112" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="#1a5e37">Plataforma</text>
-        <text x="631" y="124" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="#1a5e37">web pública</text>
-        <text x="631" y="136" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="#1a5e37">para todos</text>
-
-        <!-- Pregunta motivadora arriba -->
-        <rect x="80" y="4" width="360" height="48" rx="8" fill="rgba(162,45,45,0.06)" stroke="#c0392b" stroke-width="1" stroke-dasharray="5 3"/>
-        <text x="260" y="24" text-anchor="middle" font-size="9.5" font-family="system-ui" fill="#922b21" font-weight="600">¿Cómo identificar la esquizofrenia de forma objetiva?</text>
-        <text x="260" y="40" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="#922b21" opacity="0.7">No existe biomarcador validado · Solo evaluación subjetiva · Alta heterogeneidad clínica</text>
-        <!-- Flecha de pregunta hacia problema -->
-        <path d="M140 52 L80 70" stroke="#c0392b" stroke-width="1.2" fill="none" stroke-dasharray="4 3" opacity="0.5"/>
-
-        <!-- Resultado final abajo -->
-        <rect x="200" y="172" width="370" height="40" rx="8" fill="rgba(30,132,73,0.07)" stroke="#1e8449" stroke-width="1"/>
-        <text x="385" y="190" text-anchor="middle" font-size="9" font-family="system-ui" fill="#1a5e37" font-weight="600">Pipeline reproducible · Datos reales · Acceso abierto a investigadores</text>
-        <text x="385" y="205" text-anchor="middle" font-size="8.5" font-family="system-ui" fill="#1a5e37" opacity="0.7">6 datasets GEO · chip Illumina HM450 · Django + Vue.js · scikit-learn</text>
-        <!-- Flechas hacia resultado -->
-        <path d="M202 150 L280 172" stroke="#1e8449" stroke-width="1.2" fill="none" opacity="0.4"/>
-        <path d="M494 150 L450 172" stroke="#1e8449" stroke-width="1.2" fill="none" opacity="0.4"/>
-        <path d="M631 150 L570 172" stroke="#1e8449" stroke-width="1.2" fill="none" opacity="0.4"/>
-      </svg>
+<section class="pagina clara" aria-label="Resultados de AUC">
+  <div class="contenido">
+    <header class="cab"><p class="cap">Capítulo 10</p><h1 tabindex="-1">Ninguno cruza el 0,75</h1></header>
+    <p>Meta del anteproyecto: <i class="t" tabindex="0">AUC-ROC</i> ≥ 0,75. A la izquierda, la <i class="t" tabindex="0">CV anidada</i> FINAL; a la derecha, el <i class="t" tabindex="0" data-k="holdout">holdout</i> sin covariables. La raya gris es el azar (0,50) y la verde, la meta.</p>
+    <div class="graf cmp" role="img" aria-label="AUC. CV anidada FINAL y holdout sin covariables. KNN 0,678 ± 0,051 y 0,696. Random Forest 0,660 ± 0,048 y 0,641. SVM lineal 0,653 ± 0,035 y 0,652. Logística 0,633 ± 0,043 y 0,598. Naive Bayes 0,627 ± 0,038 y 0,612. Azar 0,50. Meta 0,75. Ninguno llega a 0,75.">
+      <div class="rejilla">
+        <span></span><span class="colh sw">CV anidada FINAL</span><span class="colh sw ho">Holdout sin covariables</span>
+        <span class="nom">KNN<small class="enui">en la interfaz</small></span>
+        <div class="area"><span class="linea l50"></span><span class="linea l75"></span><div class="pista"><div class="barra" style="--v:67.8%">0,678 ± 0,051</div></div></div>
+        <div class="area"><span class="linea l50"></span><span class="linea l75"></span><div class="pista"><div class="barra ho" style="--v:69.6%">0,696</div></div></div>
+        <span class="nom">Random Forest<small class="enui">en la interfaz</small></span>
+        <div class="area"><span class="linea l50"></span><span class="linea l75"></span><div class="pista"><div class="barra" style="--v:66%">0,660 ± 0,048</div></div></div>
+        <div class="area"><span class="linea l50"></span><span class="linea l75"></span><div class="pista"><div class="barra ho" style="--v:64.1%">0,641</div></div></div>
+        <span class="nom">SVM lineal<small class="enui">en la interfaz</small></span>
+        <div class="area"><span class="linea l50"></span><span class="linea l75"></span><div class="pista"><div class="barra" style="--v:65.3%">0,653 ± 0,035</div></div></div>
+        <div class="area"><span class="linea l50"></span><span class="linea l75"></span><div class="pista"><div class="barra ho" style="--v:65.2%">0,652</div></div></div>
+        <span class="nom">Logística<small class="fuera">medida, fuera de la interfaz</small></span>
+        <div class="area"><span class="linea l50"></span><span class="linea l75"></span><div class="pista"><div class="barra" style="--v:63.3%">0,633 ± 0,043</div></div></div>
+        <div class="area"><span class="linea l50"></span><span class="linea l75"></span><div class="pista"><div class="barra ho" style="--v:59.8%">0,598</div></div></div>
+        <span class="nom">Naive Bayes<small class="fuera">medida, fuera de la interfaz</small></span>
+        <div class="area"><span class="linea l50"></span><span class="linea l75"></span><div class="pista"><div class="barra" style="--v:62.7%">0,627 ± 0,038</div></div></div>
+        <div class="area"><span class="linea l50"></span><span class="linea l75"></span><div class="pista"><div class="barra ho" style="--v:61.2%">0,612</div></div></div>
+      </div>
     </div>
+    <p class="nota">LOGO, brazo B, sin covariables, es otro experimento: los cinco AUC van de 0,379 (SVM) a 0,532 (Naive Bayes). El 0,472 es solo el KNN de ese brazo, no un promedio ni el resultado principal.</p>
+  </div>
+</section>
 
-    <p class="cuerpo hint-diagrama-movil" style="font-size:0.88rem;opacity:0.72;margin-top:-0.25rem;">
-      En móviles, si el diagrama no cabe en pantalla, deslízalo horizontalmente <em>dentro de esta página</em> (no cambia de capítulo).
-    </p>
+<section class="pagina blanca" aria-label="Resultados de F1">
+  <div class="contenido">
+    <header class="cab"><p class="cap">Capítulo 10 · F1</p><h1 tabindex="-1">Tampoco se llega al 0,70</h1></header>
+    <p>El <i class="t" tabindex="0">F1</i> mira el equilibrio al asignar la clase. La meta del anteproyecto era 0,70. Ninguna celda la alcanza. El mejor holdout es el de KNN: 0,686.</p>
+    <div class="nums-wrap">
+      <table class="nums">
+        <caption class="sr">F1. CV anidada FINAL y holdout sin covariables. Meta 0,70.</caption>
+        <thead><tr><th scope="col">Modelo</th><th scope="col">CV anidada</th><th scope="col">Holdout sin covariables</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">KNN</th><td>0,661 ± 0,039</td><td>0,686</td></tr>
+          <tr><th scope="row">Random Forest</th><td>0,645 ± 0,032</td><td>0,643</td></tr>
+          <tr><th scope="row">SVM lineal</th><td>0,609 ± 0,039</td><td>0,618</td></tr>
+          <tr><th scope="row">Regresión logística <span class="fuera">medida, fuera de la interfaz</span></th><td>0,590 ± 0,046</td><td>0,579</td></tr>
+          <tr><th scope="row">Naive Bayes <span class="fuera">medida, fuera de la interfaz</span></th><td>0,599 ± 0,041</td><td>0,597</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="nota">Residualizar las nueve <i class="t" tabindex="0">covariables</i> no subió el techo. En KNN el holdout pasa de AUC 0,696 a 0,660 y el F1 de 0,686 a 0,601. <i class="t" tabindex="0">smoking_SSc</i> sale de la propia metilación, así que restarlo quita señal metilómica.</p>
+  </div>
+</section>
 
-    <p class="cuerpo">El proyecto nace de un problema clínico concreto: la esquizofrenia se diagnostica de forma subjetiva porque no existen biomarcadores objetivos. La epigenética ofrece un camino prometedor, y dentro de ella la metilación del ADN es el mecanismo más estudiado. Los datos ya están disponibles en repositorios públicos, pero dispersos y sin armonizar. El modelo de machine learning aprende a leer esos patrones, y la plataforma web convierte ese conocimiento en algo accesible para cualquier investigador.
-    </p>
-
-    <div class="analogia">
-      Hay un problema real → existe un área científica que lo aborda → hay un mecanismo medible → hay datos disponibles → hay un modelo que los lee → hay una plataforma que lo pone al alcance de todos.
+<section class="pagina clara" aria-label="Caminos de la plataforma">
+  <div class="contenido">
+    <header class="cab"><p class="cap">Capítulo 11</p><h1 tabindex="-1">Dos caminos, un formulario</h1></header>
+    <p>Sin una <i class="t" tabindex="0">plataforma web</i>, el modelo sería un script. PERASArc, ampliada aquí, lo abre en el navegador: cuenta, <i class="t" tabindex="0" data-k="CSV armonizado">CSV armonizado</i>, y KNN, SVM lineal o Random Forest. Los <i class="t" tabindex="0" data-k="camino A/B">caminos A y B</i> comparten panel y no comparten archivo.</p>
+    <div class="caminos">
+      <article class="camino">
+        <h2><i class="t" tabindex="0" data-k="camino A">Camino A</i> · v1-prod100</h2>
+        <p>Panel más nueve <i class="t" tabindex="0">covariables</i>. El <i class="t" tabindex="0">joblib</i> residualiza; no se pasan como columnas extra al clasificador.</p>
+        <div class="chips" aria-label="Nueve covariables del camino A"><span class="chip">sexo</span><span class="chip"><i class="t" tabindex="0">edad epigenética</i></span><span class="chip"><i class="t" tabindex="0">smoking_SSc</i></span><span class="chip">B</span><span class="chip">NK</span><span class="chip">CD4T</span><span class="chip">CD8T</span><span class="chip">Mono</span><span class="chip">Eosino</span></div>
+        <p>Neutro no entra. El ajuste prod_100 usa las 2.229 muestras etiquetadas. Los train_80 son solo trazabilidad.</p>
+        <p class="archivos">pipeline_knn_prod_100.joblib<br>pipeline_svm_platt_prod_100.joblib<br>pipeline_rf_prod_100.joblib</p>
+      </article>
+      <article class="camino b">
+        <h2><i class="t" tabindex="0" data-k="camino B">Camino B</i> · v1-prod100-b</h2>
+        <p>Solo el panel, sin residualizar. El formulario abre aquí. No es un recorte del archivo A.</p>
+        <p class="archivos">pipeline_knn_prod_100_sin_cov.joblib<br>pipeline_svm_platt_prod_100_sin_cov.joblib<br>pipeline_rf_prod_100_sin_cov.joblib</p>
+      </article>
     </div>
   </div>
 </section>
 
-<!-- ======================================================
-     PÁGINA 12 — CIERRE (layout compacto)
-     ====================================================== -->
-<section class="pagina pagina-oscura pagina-cierre" data-pagina="12" aria-label="Resumen del proyecto">
-  <div class="contenido contenido-cierre">
-    <header class="cabecera-cierre">
-      <p class="etiqueta-cap" style="color:rgba(254,254,255,0.45);">Capítulo 12 · Cierre</p>
-      <h1 class="titulo-pagina titulo-cierre">Este es el proyecto</h1>
-      <p class="meta-cierre">Tras el Cap. 11 «Cómo todo conecta» — tres pilares en una frase cada uno.</p>
-    </header>
+<section class="pagina blanca" aria-label="Arquitectura mínima">
+  <div class="contenido">
+    <header class="cab"><p class="cap">Capítulo 11 · el equipo</p><h1 tabindex="-1">Cuatro cajas en el laboratorio</h1></header>
+    <p>La página vive en el LAN del laboratorio. El servidor de la UDES no está. Abrirla a internet queda fuera de este proyecto.</p>
+    <figure class="arq">
+      <p class="arq-titulo">Equipo del laboratorio</p>
+      <div class="arq-red">
+        <div class="caja vue">Página Vue</div>
+        <span class="flecha" aria-hidden="true">→</span>
+        <div class="caja api">API Django</div>
+        <span class="flecha f2" aria-hidden="true">→</span>
+        <div class="caja db">PostgreSQL<small>El usuario no escribe en la base.</small></div>
+        <span class="down" aria-hidden="true">↓</span>
+        <div class="caja mod">Modelos ya exportados<small>KNN, SVM lineal calibrado Platt, Random Forest · caminos A y B</small></div>
+      </div>
+    </figure>
+    <div class="chips" aria-label="Lo que la página no hace"><span class="chip no">GEO crudo, rechazado</span><span class="chip no">Sin reentrenar</span><span class="chip no">Sin chip EPIC</span><span class="chip no">0,75 y 0,70 no cruzados</span><span class="chip no">LOGO cerca del azar</span></div>
+    <p class="nota">La SPA no ejecuta dasen, BMIQ, regRCPqn, EpiDISH, EpiSmokEr ni methylclock. Sale la clase SCZ o CNT y <i class="t" tabindex="0">p_scz</i>. «Herramienta de investigación; no constituye diagnóstico clínico.»</p>
+  </div>
+</section>
 
-    <ol class="resumen-compacto" aria-label="Resumen en tres puntos">
+<section class="pagina clara" aria-label="Cómo todo conecta">
+  <div class="contenido">
+    <header class="cab"><p class="cap">Capítulo 12</p><h1 tabindex="-1">Cómo todo conecta</h1></header>
+    <p>Un problema clínico, una medida en sangre y, al final, una clase en la página. El archivo recorre tres fases, en este orden.</p>
+    <ol class="fases">
       <li>
-        <span class="pill" aria-hidden="true">1</span>
-        <span>
-          <strong>Datos de metilación</strong>
-          Seis estudios públicos (NCBI GEO, chip Illumina HM450), perfiles con y sin esquizofrenia.
-        </span>
+        <b>Fase 1 · Origen</b>
+        <ol>
+          <li>Estudios GEO<small>sangre, chip 450k</small></li>
+          <li>Laboratorio R</li>
+          <li>Matrices de betas</li>
+        </ol>
       </li>
       <li>
-        <span class="pill" aria-hidden="true">2</span>
-        <span>
-          <strong>Modelo de aprendizaje automático</strong>
-          Entrenado para patrones epigenéticos; evaluación con métricas de generalización (AUC-ROC / AUC-PR).
-        </span>
+        <b>Fase 2 · Este trabajo</b>
+        <ol>
+          <li>Filtro de varianza<small>227.323 → 66.441</small></li>
+          <li><i class="t" tabindex="0">Mann-Whitney</i>, k, <i class="t" tabindex="0">CV anidada</i>, <i class="t" tabindex="0" data-k="holdout">holdout</i> 20 %</li>
+        </ol>
       </li>
       <li>
-        <span class="pill" aria-hidden="true">3</span>
-        <span>
-          <strong>Plataforma web pública</strong>
-          Carga de datos, ejecución del modelo y resultados interpretables, sin depender solo de scripts.
-        </span>
+        <b>Fase 3 · La página</b>
+        <ol>
+          <li>Export<small>joblibs + <i class="t" tabindex="0" data-k="panel congelado">panel congelado</i></small></li>
+          <li>SPA<small>CSV ya armonizado → clase + <i class="t" tabindex="0">p_scz</i></small></li>
+        </ol>
       </li>
     </ol>
+  </div>
+</section>
 
-    <div class="cierre-pie">
-      <p class="creditos-linea">
-        Dir. E. Pinzón Reyes · Codir. H. Hernández Hincapié · Codir. N. Farelo Verlasquez · Est. S. Cacua Villamizar
-      </p>
-      <div class="acciones-cierre">
-        <button type="button" class="btn btn-primario btn-compacto" onclick="irA(0)" aria-label="Volver al inicio">
-          ← Volver al inicio
-        </button>
-        <button type="button" class="btn btn-ghost btn-compacto" onclick="irA(1)" aria-label="Leer desde el principio">
-          Leer de nuevo
-        </button>
-      </div>
+<section class="pagina blanca" aria-label="Fechas del cierre">
+  <div class="contenido">
+    <header class="cab"><p class="cap">Cierre</p><h1 tabindex="-1">Siete fechas, ya cerradas</h1></header>
+    <p>El tramo final, sin el detalle de cada experimento. El módulo quedó terminado.</p>
+    <ol class="hitos">
+      <li><time datetime="2026-07-29">29 jul 2026</time><span>CV anidada FINAL</span></li>
+      <li><time datetime="2026-08-04">4 ago</time><span>Holdout</span></li>
+      <li><time datetime="2026-08-15">15 ago</time><span>Export del camino A y humo en PERASArc</span></li>
+      <li><time datetime="2026-08-18">18 ago</time><span>Contrato: el archivo ya llega armonizado</span></li>
+      <li><time datetime="2026-08-24">24 ago</time><span>Camino B</span></li>
+      <li><time datetime="2026-08-25">25 ago</time><span>SPA, con el camino B por defecto</span></li>
+      <li><time datetime="2026-09-12">12 sep</time><span>Despliegue en el LAN del laboratorio</span></li>
+    </ol>
+    <p class="estado">Estado: terminado.</p>
+  </div>
+</section>
+
+<section class="pagina oscura cierre" aria-label="Resumen del proyecto">
+  <div class="contenido">
+    <header class="cab"><p class="cap">Capítulo 13 · Cierre</p><h1 tabindex="-1">Este es el proyecto</h1></header>
+    <ul class="tarjetas">
+      <li class="tarjeta"><b>Datos</b><span>Cinco estudios públicos de NCBI GEO, chip 450k.</span></li>
+      <li class="tarjeta"><b>Modelo</b><span>Tres algoritmos medidos con AUC-ROC y F1.</span></li>
+      <li class="tarjeta"><b>Plataforma</b><span>Carga de un archivo y resultados por muestra.</span></li>
+    </ul>
+    <p class="aviso">Módulo terminado. Material de divulgación. Los resultados no constituyen diagnóstico clínico.</p>
+    <p class="firma">Dir. E. Pinzón Reyes · Codir. H. Hernández Hincapié · Codir. N. Farelo Verlásquez<br>Est. S. Cacua Villamizar</p>
+    <div class="acciones">
+      <button class="btn pri" type="button" onclick="ir(0)">Volver al inicio</button>
+      <button class="btn sec" type="button" onclick="ir(1)">Leer de nuevo</button>
     </div>
   </div>
 </section>
 
-</div><!-- /#libro -->
+</main>
 
-<!-- ============================================================
-     JAVASCRIPT
-     ============================================================ -->
-<script>
-/* ====================================================
-   GLOSARIO CENTRAL DE TÉRMINOS
-   ==================================================== */
-const glosario = {
-  "ADN": "Ácido desoxirribonucleico. La molécula que guarda las instrucciones completas para construir y operar un organismo. Está presente en casi todas las células del cuerpo.",
-  "genes": "Segmentos del ADN con instrucciones para una función específica: producir una proteína, regular otra función biológica, etc. El ser humano tiene entre 20.000 y 25.000 genes.",
-  "epigenética": "Rama de la biología que estudia cambios en la expresión génica sin alterar la secuencia del ADN. Estas marcas pueden ser heredables y las influye el entorno.",
-  "metilación del ADN": "Proceso en el que un grupo metilo (CH₃) se adhiere a posiciones específicas del ADN (citosinas), generalmente silenciando el gen afectado sin modificar su secuencia.",
-  "grupo metilo": "Molécula pequeña (CH₃) que actúa como interruptor: cuando se fija sobre el ADN, típicamente apaga el gen en esa región.",
-  "chip Illumina HM450": "Microchip (Illumina HumanMethylation450 BeadChip) que mide simultáneamente el nivel de metilación en ~450.000 posiciones del genoma humano.",
-  "fenotipo": "Conjunto de características observables de una persona: apariencia, comportamiento, salud. Resulta de combinar la genética con el entorno a lo largo de la vida.",
-  "diagnóstico clínico": "Resultado de la evaluación psiquiátrica que determina si una persona tiene o no esquizofrenia. Es la etiqueta objetivo del modelo.",
-  "esquizofrenia": "Trastorno mental severo que afecta la percepción de la realidad, el pensamiento y el comportamiento. Afecta al ~1% de la población mundial.",
-  "biomarcadores": "Indicadores biológicos medibles —proteínas, patrones genéticos, niveles de metilación— que permiten identificar una enfermedad de forma objetiva y reproducible.",
-  "firma epigenética": "Conjunto de posiciones del genoma (sitios CpG) con niveles de metilación consistentemente distintos entre dos grupos clínicos. Un patrón conjunto, no un solo punto.",
-  "tejido cerebral": "Tejido nervioso del cerebro. Solo es accesible post mortem, lo que limita la investigación en personas vivas.",
-  "sangre periférica": "Sangre que circula por venas y arterias fuera del cerebro. Accesible mediante extracción común, comparable a cualquier análisis de rutina médica.",
-  "NCBI GEO": "Gene Expression Omnibus. Base de datos pública del NCBI (EE. UU.) con datos genómicos y epigenómicos de miles de estudios de investigación.",
-  "metaanálisis IPD": "Metaanálisis con datos individuales por participante. En lugar de combinar solo conclusiones, se trabaja con datos crudos de cada persona, lo que da mayor poder estadístico.",
-  "armonizarse": "Corregir diferencias técnicas (efectos batch) entre estudios de distintos laboratorios para que los datos sean comparables entre sí.",
-  "modelo supervisado": "Algoritmo que aprende a clasificar datos a partir de ejemplos etiquetados. Aquí: perfiles de metilación con diagnóstico conocido.",
-  "AUC-ROC": "Área bajo la curva Receiver Operating Characteristic. Mide qué tan bien el modelo distingue positivos de negativos. 1.0 = perfecto, 0.5 = azar.",
-  "AUC-PR": "Área bajo la curva Precisión-Recall. Especialmente útil cuando las clases están desbalanceadas, como en datos clínicos.",
-  "script": "Archivo de código ejecutable desde una terminal. Requiere conocimientos de programación para ser usado.",
-  "plataforma web pública": "Aplicación accesible desde un navegador sin instalación. En este proyecto construida sobre la arquitectura PERASArc (Django + Vue.js)."
-};
-
-/* ====================================================
-   ESTADO
-   ==================================================== */
-const paginas  = document.querySelectorAll('.pagina');
-const total    = paginas.length;
-let actual     = 0;
-let animando   = false;
-let hintVisible = true;
-
-/* ====================================================
-   BARRA DE PROGRESO SUPERIOR
-   ==================================================== */
-function actualizarBarra() {
-  const pct = total <= 1 ? 100 : (actual / (total - 1)) * 100;
-  document.getElementById('barra-progreso').style.width = pct + '%';
-}
-
-/* ====================================================
-   PUNTOS DE PROGRESO
-   ==================================================== */
-const contenedorProgreso = document.getElementById('progreso');
-
-function construirProgreso() {
-  contenedorProgreso.innerHTML = '';
-  paginas.forEach((_, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'punto' + (i === actual ? ' activo' : '');
-    btn.setAttribute('aria-label', 'Ir a página ' + (i + 1));
-    btn.addEventListener('click', () => irA(i));
-    contenedorProgreso.appendChild(btn);
-  });
-  const contador = document.createElement('span');
-  contador.id = 'contador-pagina';
-  contador.setAttribute('aria-live', 'polite');
-  contenedorProgreso.appendChild(contador);
-  actualizarContador();
-}
-
-function actualizarContador() {
-  const el = document.getElementById('contador-pagina');
-  if (el) el.textContent = (actual + 1) + ' / ' + total;
-}
-
-/* ====================================================
-   NAVEGACIÓN
-   ==================================================== */
-function irA(destino, dir) {
-  if (animando || destino === actual || destino < 0 || destino >= total) return;
-  animando = true;
-
-  const direction = dir !== undefined ? dir : (destino > actual ? 1 : -1);
-  const anterior  = actual;
-  actual = destino;
-
-  paginas[anterior].classList.remove('activa');
-  paginas[anterior].classList.add(direction > 0 ? 'saliendo-izq' : 'saliendo-der');
-  paginas[actual].classList.add('activa');
-
-  actualizarUI();
-  ocultarHint();
-
-  setTimeout(() => {
-    paginas[anterior].classList.remove('saliendo-izq', 'saliendo-der');
-    animando = false;
-  }, 520);
-}
-
-function siguiente() { if (actual < total - 1) irA(actual + 1, 1); }
-function anterior()  { if (actual > 0)         irA(actual - 1, -1); }
-
-function actualizarUI() {
-  document.querySelectorAll('.punto').forEach((p, i) => {
-    p.classList.toggle('activo', i === actual);
-  });
-  actualizarContador();
-  actualizarBarra();
-  const btnA = document.getElementById('nav-anterior');
-  const btnS = document.getElementById('nav-siguiente');
-  btnA.classList.toggle('oculto', actual === 0);
-  btnS.classList.toggle('oculto', actual === total - 1);
-}
-
-/* ====================================================
-   HINT DE TECLADO
-   ==================================================== */
-function ocultarHint() {
-  if (!hintVisible) return;
-  hintVisible = false;
-  const hint = document.getElementById('hint-teclado');
-  hint.style.opacity = '0';
-  setTimeout(() => hint.style.display = 'none', 500);
-}
-
-/* ====================================================
-   EVENTOS DE NAVEGACIÓN
-   ==================================================== */
-document.getElementById('nav-anterior').addEventListener('click', anterior);
-document.getElementById('nav-siguiente').addEventListener('click', siguiente);
-
-document.addEventListener('keydown', e => {
-  /* Solo flechas horizontales: el scroll vertical no cambia de diapositiva */
-  if (e.key === 'ArrowRight') { e.preventDefault(); siguiente(); }
-  if (e.key === 'ArrowLeft')  { e.preventDefault(); anterior(); }
-});
-
-// Swipe táctil solo en el libro y solo si el gesto es claramente horizontal
-// (evita cambiar de página al desplazarse verticalmente por un texto largo)
-const libroEl = document.getElementById('libro');
-let touchX0 = null;
-let touchY0 = null;
-libroEl.addEventListener('touchstart', e => {
-  touchX0 = e.touches[0].clientX;
-  touchY0 = e.touches[0].clientY;
-}, { passive: true });
-libroEl.addEventListener('touchend', e => {
-  if (touchX0 === null || touchY0 === null) return;
-  const t = e.changedTouches[0];
-  const dx = t.clientX - touchX0;
-  const dy = t.clientY - touchY0;
-  touchX0 = touchY0 = null;
-  if (Math.abs(dx) < 56) return;
-  if (Math.abs(dx) <= Math.abs(dy) * 1.15) return;
-  dx < 0 ? siguiente() : anterior();
-}, { passive: true });
-
-/* ====================================================
-   SISTEMA DE TOOLTIPS
-   ==================================================== */
-const tooltipEl    = document.getElementById('tooltip');
-const tooltipLabel = document.getElementById('tooltip-label');
-const tooltipDef   = document.getElementById('tooltip-def');
-let tooltipActivo  = false;
-
-function mostrarTooltip(term, x, y) {
-  const key = term.dataset.term || term.textContent.trim();
-  const def = term.dataset.def  || glosario[key] || '';
-  if (!def) return;
-  tooltipLabel.textContent = key;
-  tooltipDef.textContent   = def;
-  tooltipEl.classList.add('visible');
-  tooltipActivo = true;
-  posicionarTooltip(x, y);
-}
-
-function ocultarTooltip() {
-  tooltipEl.classList.remove('visible');
-  tooltipActivo = false;
-}
-
-function posicionarTooltip(x, y) {
-  const W = 270, H = tooltipEl.offsetHeight || 80, margen = 14;
-  let left = x + margen;
-  let top  = y - H / 2;
-  if (left + W  > window.innerWidth  - 10) left = x - W - margen;
-  if (top  < 8)                            top  = 8;
-  if (top  + H > window.innerHeight - 8)  top  = window.innerHeight - H - 8;
-  tooltipEl.style.left = left + 'px';
-  tooltipEl.style.top  = top  + 'px';
-}
-
-// Hover en desktop
-document.addEventListener('mouseover', e => {
-  const t = e.target.closest('.term');
-  if (t) mostrarTooltip(t, e.clientX, e.clientY);
-});
-document.addEventListener('mousemove', e => {
-  if (tooltipActivo) posicionarTooltip(e.clientX, e.clientY);
-});
-document.addEventListener('mouseout', e => {
-  if (e.target.closest('.term')) ocultarTooltip();
-});
-
-// Tap en mobile (toggle)
-document.addEventListener('touchstart', e => {
-  const t = e.target.closest('.term');
-  if (t) {
-    e.preventDefault();
-    if (tooltipActivo) { ocultarTooltip(); return; }
-    const r = t.getBoundingClientRect();
-    mostrarTooltip(t, r.left + r.width / 2, r.top);
-  } else if (tooltipActivo) {
-    ocultarTooltip();
-  }
-}, { passive: false });
-
-// Teclado para términos (foco + Enter/Space)
-document.addEventListener('keydown', e => {
-  const t = document.activeElement.closest('.term');
-  if (t && (e.key === 'Enter' || e.key === ' ')) {
-    e.preventDefault();
-    if (tooltipActivo) { ocultarTooltip(); return; }
-    const r = t.getBoundingClientRect();
-    mostrarTooltip(t, r.left + r.width, r.top);
-  }
-  if (e.key === 'Escape' && tooltipActivo) ocultarTooltip();
-});
-
-/* ====================================================
-   ARRANQUE
-   ==================================================== */
-construirProgreso();
-paginas[0].classList.add('activa');
-actualizarUI();
-
-// Ocultar hint tras 5 segundos si no hay interacción
-setTimeout(ocultarHint, 5000);
-</script>
+<script src="js/main.js"></script>
 </body>
 </html>
