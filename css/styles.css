@@ -1,11 +1,12 @@
-/* Estilos de la guía. La fuente se busca junto a index.html, no dentro de css/. */
-@font-face{font-family:FranklinGothic;src:url(../FranklinGothic.ttf) format("truetype");font-display:swap}
+/* Estilos de la guía. Franklin Gothic Medium se usa si el sistema la tiene instalada.
+   No hay .ttf en el repo: pedirlo devolvía 404 en Pages y no cambia el diseño. */
 :root{--az:#1049ac;--azm:#1859cc;--azo:#0b3578;--azc:#e4ecf8;--bl:#fefeff;--gf:#f3f2f7;--gm:#e8e7ef;--am:#F6AD24;--ng:#191919;--mu:#4f4f68;--r:16px;--t:.48s cubic-bezier(.4,0,.2,1);--bar:4.5rem;
---f:FranklinGothic,"Franklin Gothic Medium","Segoe UI",system-ui,sans-serif;--s:system-ui,-apple-system,"Segoe UI",sans-serif}
+--f:"Franklin Gothic Medium","Franklin Gothic",Segoe UI,system-ui,sans-serif;--s:system-ui,-apple-system,"Segoe UI",sans-serif}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
 body{font-family:var(--s);background:#0a0a14;color:var(--ng);-webkit-font-smoothing:antialiased}
-#libro{position:relative;height:100vh;height:100dvh;overflow:hidden}
+/* Fijo al viewport: un hermano en flujo (el QR, si perdiera position) no puede abrir una franja oscura arriba. */
+#libro{position:fixed;inset:0;z-index:1;overflow:hidden}
 
 /* Páginas */
 .pagina{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;overflow-y:auto;overscroll-behavior:contain;
@@ -17,7 +18,9 @@ visibility:hidden;opacity:0;transform:translateX(60px);pointer-events:none}
 .pagina.desde-izq{transform:translateX(-60px)}
 .oscura{background:linear-gradient(145deg,#0c3a9e,#1049ac 55%,#0d3f8f);color:var(--bl)}
 .clara{background:var(--gf)}.blanca{background:var(--bl)}
-.contenido{width:100%;max-width:62rem;display:flex;flex-direction:column;gap:1.5rem}
+.contenido{width:100%;max-width:62rem;min-width:0;display:flex;flex-direction:column;align-items:stretch;gap:1.5rem}
+.contenido:has(>.embudo),.contenido:has(>.arq){gap:1rem}
+.contenido:has(>.nums-wrap){gap:1.15rem}
 .cab{display:flex;flex-direction:column;gap:.5rem}
 .cap{font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--mu)}
 .oscura .cap{color:rgba(254,254,255,.75)}
@@ -126,8 +129,8 @@ ol.tarjetas .tarjeta::before{counter-increment:n;content:counter(n);width:1.7rem
 .carril .pie{font-size:.84rem;line-height:1.45;color:var(--mu)}
 
 /* Embudo de columnas. --w es solo una guía visual: los conteos van en el texto. */
-.embudo{list-style:none;display:flex;flex-direction:column;align-items:center;gap:.35rem}
-.embudo li{width:var(--w,100%);background:var(--bl);border:1px solid var(--gm);border-top:3px solid var(--az);border-radius:12px;padding:.32rem .7rem;text-align:center}
+.embudo{list-style:none;display:flex;flex-direction:column;align-items:center;gap:.22rem}
+.embudo li{width:var(--w,100%);background:var(--bl);border:1px solid var(--gm);border-top:3px solid var(--az);border-radius:12px;padding:.22rem .7rem;text-align:center}
 .embudo b{display:block;color:var(--az);font-size:1.02rem}
 .embudo span{font-size:.8rem;color:var(--mu);line-height:1.35}
 .embudo .fijo{border-top-color:var(--am)}
@@ -148,7 +151,7 @@ ol.tarjetas .tarjeta::before{counter-increment:n;content:counter(n);width:1.7rem
 .camino.b h2{color:#8a5a00}
 .camino p{font-size:.9rem;line-height:1.5;max-width:none}
 .archivos{font-family:ui-monospace,monospace;font-size:.72rem;line-height:1.45;color:var(--ng);background:var(--gf);border-radius:8px;padding:.45rem .6rem;overflow-wrap:anywhere}
-.arq{border:1px solid var(--gm);border-radius:var(--r);padding:.9rem 1rem;background:var(--gf)}
+.arq{border:1px solid var(--gm);border-radius:var(--r);padding:.65rem .85rem;background:var(--gf)}
 .arq-titulo{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--az);margin-bottom:.7rem}
 .arq-red{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr);grid-template-areas:"vue f1 api f2 db" ". . down . ." "mod mod mod mod mod";gap:.4rem;align-items:stretch}
 .caja{background:var(--bl);border:1px solid var(--gm);border-top:3px solid var(--az);border-radius:12px;padding:.6rem .65rem;text-align:center;color:var(--az);font-weight:700;font-size:.92rem}
@@ -183,13 +186,14 @@ ol.tarjetas .tarjeta::before{counter-increment:n;content:counter(n);width:1.7rem
 .af{display:grid;grid-template-columns:1fr 1fr;gap:.35rem .9rem;background:var(--gf);border:1px solid var(--gm);border-radius:12px;padding:.55rem .75rem}
 .af p{margin:0;max-width:none;font-size:.84rem;line-height:1.4}
 .af b{color:var(--az);font-size:.72rem;letter-spacing:.05em;text-transform:uppercase}
-.grupos{display:grid;grid-template-columns:1fr 1fr;gap:.8rem 1.1rem}
+/* minmax(0,1fr) y min-width:0 evitan que el ítem flex encoja la grilla a una sola columna. */
+.grupos{display:grid;width:100%;min-width:0;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:.8rem 1.1rem}
 .grupos h2{margin:0 0 .35rem;font:700 .74rem/1.2 var(--s);letter-spacing:.08em;text-transform:uppercase;color:var(--az)}
-.grupos dl{display:flex;flex-direction:column;gap:.32rem}
-.grupos .entrada{background:var(--bl);border:1px solid var(--gm);border-left:3px solid var(--az);border-radius:10px;padding:.32rem .5rem}
+.grupos dl{display:flex;flex-direction:column;gap:.32rem;min-width:0}
+.grupos .entrada{background:#fff;border:1px solid #d5d4e0;border-left:3px solid var(--az);border-radius:10px;padding:.32rem .5rem}
 .grupos dt{font-weight:700;color:var(--az);font-size:.76rem}
 .grupos dd{margin:0;color:var(--mu);font-size:.73rem;line-height:1.32}
-@media(max-width:800px){.recorrido,.grupos,.af{grid-template-columns:1fr}}
+@media(max-width:800px){.recorrido,.grupos,.af{grid-template-columns:minmax(0,1fr)}}
 .hitos{list-style:none;display:grid;gap:.55rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,13.5rem),1fr))}
 .hitos li{background:var(--bl);border:1px solid var(--gm);border-top:3px solid var(--am);border-radius:12px;padding:.6rem .7rem;display:flex;flex-direction:column;gap:.2rem}
 .hitos time{font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--az)}
@@ -197,7 +201,7 @@ ol.tarjetas .tarjeta::before{counter-increment:n;content:counter(n);width:1.7rem
 .estado{align-self:flex-start;background:var(--az);color:#fff;border-radius:50px;padding:.4rem .95rem;font-size:.88rem;font-weight:700}
 .nums-wrap{border:1px solid var(--gm);border-radius:var(--r);overflow:hidden;background:var(--bl)}
 .nums{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
-.nums th,.nums td{padding:.5rem .7rem;text-align:left;border-bottom:1px solid var(--gm);font-size:.9rem}
+.nums th,.nums td{padding:.4rem .7rem;text-align:left;border-bottom:1px solid var(--gm);font-size:.9rem}
 .nums tr:last-child td,.nums tr:last-child th{border-bottom:0}
 .nums thead th{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--az);background:var(--gf)}
 .nums td{color:var(--ng);font-weight:700}
@@ -234,8 +238,10 @@ ol.tarjetas .tarjeta::before{counter-increment:n;content:counter(n);width:1.7rem
 #top{position:fixed;top:0;left:0;height:3px;background:var(--am);z-index:300;transition:width .4s}
 .lado{display:none;position:fixed;top:50%;transform:translateY(-50%);z-index:200;width:48px;height:48px;border-radius:50%;border:2px solid var(--azo);background:var(--az);color:#fff;cursor:pointer;place-items:center;box-shadow:0 4px 14px rgba(16,73,172,.35);transition:opacity .25s,background .2s}
 .lado:hover{background:var(--azm)}.lado:disabled{opacity:0;pointer-events:none}
+#ant{left:.75rem}#sig{right:.75rem}
 #ant{left:max(.75rem,env(safe-area-inset-left))}#sig{right:max(.75rem,env(safe-area-inset-right))}
-#progreso{position:fixed;left:50%;bottom:max(.6rem,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:200;display:flex;align-items:center;gap:.4rem;background:rgba(16,73,172,.96);padding:.3rem .45rem;border-radius:50px;border:1px solid rgba(255,255,255,.22);box-shadow:0 4px 16px rgba(0,0,0,.2)}
+#progreso{position:fixed;left:50%;bottom:.6rem;transform:translateX(-50%);z-index:200;display:flex;align-items:center;gap:.4rem;background:rgba(16,73,172,.96);padding:.3rem .45rem;border-radius:50px;border:1px solid rgba(255,255,255,.22);box-shadow:0 4px 16px rgba(0,0,0,.2)}
+#progreso{bottom:max(.6rem,env(safe-area-inset-bottom))}
 .bb{width:42px;height:42px;border-radius:50%;border:0;background:rgba(255,255,255,.16);color:#fff;display:grid;place-items:center;cursor:pointer}
 .bb:disabled{opacity:.3}
 .pts{display:none}
@@ -244,10 +250,11 @@ ol.tarjetas .tarjeta::before{counter-increment:n;content:counter(n);width:1.7rem
 .punto.activo::before{background:var(--am);transform:scale(1.5)}
 #cont{color:#fff;font-size:.8rem;font-weight:600;min-width:3.4rem;text-align:center}
 #hint{display:none;position:fixed;bottom:calc(var(--bar) + .2rem);left:50%;transform:translateX(-50%);z-index:200;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.6);pointer-events:none}
-/* QR fijo: vive en el margen inferior, junto a la barra, y no se mueve al cambiar de lámina. */
-#qr{display:none;position:fixed;z-index:220;left:max(.7rem,env(safe-area-inset-left));bottom:max(.45rem,env(safe-area-inset-bottom));flex-direction:column;align-items:center;gap:.12rem;width:5.4rem;padding:.35rem .35rem .28rem;background:#fff;color:var(--az);text-decoration:none;border-radius:12px;border:1px solid var(--gm);border-top:3px solid var(--az);box-shadow:0 8px 22px rgba(10,10,20,.28)}
+/* QR fijo abajo a la izquierda. left/bottom simples primero: si max() o env() se descartan, no vuelve a su sitio estático (arriba del body). */
+#qr{display:none;position:fixed;z-index:220;top:auto;right:auto;left:.7rem;bottom:.45rem;flex-direction:column;align-items:center;gap:.12rem;width:5.6rem;padding:.35rem .4rem .28rem;background:#fff;color:var(--az);text-decoration:none;border-radius:12px;border:1px solid var(--gm);border-top:3px solid var(--az);box-shadow:0 8px 22px rgba(10,10,20,.28)}
+#qr{left:max(.7rem,env(safe-area-inset-left));bottom:max(.45rem,env(safe-area-inset-bottom))}
 #qr img{width:100%;height:auto;display:block}
-#qr span{font-size:.58rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+#qr span{font-size:.58rem;font-weight:700;letter-spacing:.08em;line-height:1;text-transform:uppercase}
 #qr:focus-visible{outline:3px solid var(--am);outline-offset:3px;border-radius:12px}
 @media(min-width:760px){
 :root{--bar:7.2rem}
@@ -261,7 +268,10 @@ ol.tarjetas .tarjeta::before{counter-increment:n;content:counter(n);width:1.7rem
 @media(max-height:560px){.pagina{padding-top:1rem}.hero .contenido{gap:1rem}}
 
 /* Animación de entrada y movimiento reducido */
-.activa .cab,.activa .bloque>*,.activa .contenido>.tarjetas,.activa .contenido>.nota,.activa .contenido>.hitos,.activa .contenido>.estado,.activa .contenido>p,.activa .contenido>.graf,.activa .contenido>.nums-wrap,.activa .contenido>.embudo,.activa .contenido>.carriles,.activa .contenido>.caminos,.activa .contenido>.arq,.activa .contenido>.recorrido,.activa .contenido>.chips,.activa .contenido>.grupos,.activa .contenido>.af,.activa .contenido>.paso-leyenda{animation:ap .45s ease both}
+.activa .cab,.activa .bloque>*,.activa .contenido>.tarjetas,.activa .contenido>.nota,.activa .contenido>.hitos,.activa .contenido>.estado,.activa .contenido>p,.activa .contenido>.graf,.activa .contenido>.nums-wrap,.activa .contenido>.embudo,.activa .contenido>.carriles,.activa .contenido>.caminos,.activa .contenido>.arq,.activa .contenido>.recorrido,.activa .contenido>.chips,.activa .contenido>.af,.activa .contenido>.paso-leyenda{animation:ap .45s ease both}
+/* El glosario solo aparece: un transform en la grilla la convierte en bloque de contención y puede colapsar las dos columnas. */
+.activa .contenido>.grupos{animation:aparecer .45s ease both}
+@keyframes aparecer{from{opacity:0}to{opacity:1}}
 .activa .bloque>*:nth-child(2){animation-delay:.12s}
 @keyframes ap{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.activa .barra{width:var(--v)}}

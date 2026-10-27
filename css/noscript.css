@@ -1,2 +1,2 @@
 /* Solo aplica si el navegador no ejecuta JavaScript. */
-html,body{height:auto;overflow:auto}#libro{height:auto}.pagina{position:static;visibility:visible;opacity:1;transform:none;min-height:100vh}#progreso,.lado{display:none}
+html,body{height:auto;overflow:auto}#libro{position:static;height:auto;overflow:visible}.pagina{position:static;visibility:visible;opacity:1;transform:none;min-height:100vh}#progreso,.lado{display:none}
