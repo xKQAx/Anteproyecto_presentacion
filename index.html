@@ -489,10 +489,17 @@
 
 </main>
 
-<a id="qr" href="https://xkqax.github.io/Anteproyecto_presentacion/" aria-label="Escanear para abrir la guía en el celular">
+<button id="qr" type="button" aria-expanded="false" aria-controls="qr-vista" aria-label="Ampliar código QR">
   <img src="img/guia-qr.svg" alt="" width="148" height="148">
   <span>Escanear</span>
-</a>
+</button>
+<div id="qr-vista" class="qr-vista" hidden role="dialog" aria-modal="true" aria-labelledby="qr-titulo">
+  <div class="qr-tarjeta">
+    <button type="button" class="qr-cerrar">Cerrar</button>
+    <img src="img/guia-qr.svg" alt="" width="320" height="320">
+    <span id="qr-titulo">Escanear</span>
+  </div>
+</div>
 
 <script src="js/main.js"></script>
 </body>

@@ -127,6 +127,33 @@ document.addEventListener('keydown',e=>{
   if(e.key==='ArrowRight')ir(a+1);else if(e.key==='ArrowLeft')ir(a-1);
   else if(e.key==='Home')ir(0);else if(e.key==='End')ir(N-1);else if(e.key==='Escape')ocu();
 });
+
+/* El QR pequeño abre una vista para escanear. Escape cierra esa vista y no cambia de lámina. */
+const qrBtn=$('#qr'),qrVista=$('#qr-vista');
+if(qrBtn&&qrVista){
+  const qrCerrar=qrVista.querySelector('.qr-cerrar');
+  const qrAbierto=()=>!qrVista.hidden;
+  function cerrarQr(){
+    if(!qrAbierto())return;
+    qrVista.hidden=true;
+    qrBtn.setAttribute('aria-expanded','false');
+    qrBtn.focus({preventScroll:true});
+  }
+  function abrirQr(){
+    if(qrAbierto()){cerrarQr();return}
+    qrVista.hidden=false;
+    qrBtn.setAttribute('aria-expanded','true');
+    qrCerrar.focus({preventScroll:true});
+  }
+  qrBtn.addEventListener('click',abrirQr);
+  qrCerrar.addEventListener('click',e=>{e.stopPropagation();cerrarQr()});
+  qrVista.addEventListener('click',e=>{if(e.target===qrVista)cerrarQr()});
+  document.addEventListener('keydown',e=>{
+    if(!qrAbierto())return;
+    if(e.key==='Escape'){e.preventDefault();e.stopPropagation();cerrarQr()}
+    else if(e.key==='Tab'){e.preventDefault();qrCerrar.focus()}
+  },true);
+}
 let x0=null,y0=null;
 const libro=$('#libro');
 libro.addEventListener('touchstart',e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
